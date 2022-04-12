@@ -1,0 +1,310 @@
+.bg-dark-blue {
+  background: $dark-blue;
+  color: $white;
+}
+
+.container{
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.indigo {
+  background-color: #4052B5;
+  color: #fff;
+}
+.color-white{
+  color: #fff !important;
+}
+.color-white a{
+  color: #fff !important;
+}
+.label-0 label {
+  margin: 0;
+}
+.v-toolbar__content, .v-toolbar--flat{
+  height: auto !important;
+}
+.picker-shadow{
+  box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 50%);
+}
+
+.btn-green {
+  background: #3AC559 !important;
+  color: $white !important;
+  font-weight: 700;
+  padding: 8px 30px;
+
+  &:hover {
+    color: $white;
+    background: #2e9c44;
+
+  }
+}
+.btn-send{
+  min-width: 200px !important;
+  margin-top: 1rem;
+}
+
+.hover-effect {
+  color: $dark;
+  letter-spacing: 0.10em;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    color: $dark;
+  }
+
+  &:after {
+    background: none repeat scroll 0 0 transparent;
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 1px;
+    left: 50%;
+    position: absolute;
+    background: $dark;
+    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+    width: 0;
+  }
+
+  &:hover:after {
+    width: 100%;
+    left: 0;
+  }
+}
+
+.error-form {
+  margin-top: 0.5rem;
+  display: inline-block;
+  color: red;
+  font-size: 14px;
+}
+
+.incrementer {
+  background: lighten($grey, 20%);
+  display: flex;
+  align-items: center;
+  border-radius: 30px;
+  justify-content: space-around;
+  padding: 5px;
+  width: 100px;
+
+  .decrement, .increment{
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: $main;
+    border: 0;
+    text-align: center  ;
+    border-radius: 50%;
+    cursor: pointer;
+    color: $white;
+    font-weight: 900;
+  }
+  .button-counter{
+
+    &__disabled{
+      background: $grey;
+    }
+    &::after,  &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12.3px;
+      height: 2px;
+      -webkit-transform: translate(-50%,-50%);
+      transform: translate(-50%,-50%);
+      background: #fff;
+      border-radius: 1px;
+    }
+  }
+  .decrement::after{
+    display: none;
+  }
+
+  .increment:after {
+    -webkit-transform: translate(-50%,-50%) rotate(90deg);
+    transform: translate(-50%,-50%) rotate(90deg);
+  }
+}
+
+.radio-custom{
+  [type="radio"]:checked,
+  [type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+  }
+  [type="radio"]:checked + label,
+  [type="radio"]:not(:checked) + label
+  {
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+    color: #666;
+  }
+  [type="radio"]:checked + label:before,
+  [type="radio"]:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    border: 1px solid $grey;
+    border-radius: 100%;
+    background: #fff;
+  }
+  [type="radio"]:checked + label:after,
+  [type="radio"]:not(:checked) + label:after {
+    content: '';
+    width: 15px;
+    height: 15px;
+    background: $main;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    border-radius: 50%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+
+    @include mobile{
+      top: 2.8px;
+      left: 3px;
+    }
+  }
+  [type="radio"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  }
+  [type="radio"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+
+.custom-checkbox {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-left: 516px;
+  margin-top: 27px;
+  color: $white;
+
+  @include mobile{
+    margin: 2rem auto 0;
+    width: fit-content;
+  }
+
+  &.default-checkbox {
+    margin: 0 0 10px;
+  }
+
+
+  &__input:checked + label:before {
+    background: $main;
+  }
+
+  &__input.color-grey:checked + label:before {
+    background: $main;
+  }
+
+
+  &__input:checked + label:after {
+    left: 22px;
+  }
+
+  &__input:checked + label.invert:after {
+    left: initial;
+    right: -4px;
+  }
+
+  &__input + label {
+    text-align: center;
+    position: relative;
+    padding: 0 0 0 57px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    width: 100%;
+    align-items: center;
+
+
+    &:before, &:after {
+      position: absolute;
+      transition: .2s;
+      content: '';
+    }
+
+    span {
+      display: block;
+      margin-top: -2px;
+    }
+
+    &.color-grey {
+
+
+      &:after {
+        border: 1px solid $grey;
+      }
+
+      &:before {
+
+        background: $grey;
+      }
+    }
+
+    &:after {
+      top: -2px;
+      left: -4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #FFF;
+    }
+
+    &.invert:after {
+      right: 22px;
+      left: initial;
+    }
+
+    &:before {
+      top: 0;
+      left: 0;
+      width: 43px;
+      height: 22px;
+      border-radius: 13px;
+      background: rgba(255, 255, 255, .6);
+    }
+
+    &.invert:before {
+      right: 0;
+      left: initial;
+    }
+  }
+
+  &__input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+}
+
+
+
+.main-layout{
+  min-height: 300px;
+  margin-top: 5rem;
+
+    @include mobile{
+      margin-top: 0;
+    }
+
+}

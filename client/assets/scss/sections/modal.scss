@@ -1,0 +1,27 @@
+.modal {
+  display: block;
+  z-index: 1041;
+  background-color: rgba(0,0,0,.7);
+  border: none;
+
+  .modal-body {
+    position: relative;
+    border-radius: 10px;
+    background-color: #fff;
+    width: 100%;
+    max-width: 600px;
+    margin: 10px auto;
+    border: none;
+  }
+  .modal-content{
+    border: none;
+  }
+
+  .btn-send{
+    width: 70%;
+    display: block;
+    margin: 1rem auto 0;
+
+  }
+
+}

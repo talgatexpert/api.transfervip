@@ -1,0 +1,54 @@
+.i-crown{
+  @include icon(url(~/assets/img/icons/crown.svg), 25px, 25px);
+}
+.i-clock{
+  @include icon(url(~/assets/img/icons/clock.svg), 25px, 25px);
+}
+.i-price{
+  @include icon(url(~/assets/img/icons/price.svg), 25px, 25px);
+}
+.i-facebook{
+  @include icon(url(~/assets/img/icons/facebook.svg), 25px, 25px);
+}
+.i-instagram{
+  @include icon(url(~/assets/img/icons/instagram.svg), 25px, 25px);
+}
+.i-search{
+  @include icon(url(~/assets/img/icons/search.svg), 25px, 25px);
+}
+.i-telegram{
+  @include icon(url(~/assets/img/icons/telegram.svg), 25px, 25px);
+}
+.i-whatsapp{
+  @include icon(url(~/assets/img/icons/whatsapp.svg), 25px, 25px);
+}
+.i-star{
+  @include icon(url(~/assets/img/icons/star.svg), 25px, 25px);
+}
+.i-star-empty{
+  @include icon(url(~/assets/img/icons/star-empty.svg), 25px, 25px);
+}
+.i-close{
+  @include icon(url(~/assets/img/icons/close.svg), 25px, 25px);
+}
+.i-time{
+  @include icon(url(~/assets/img/icons/time.svg), 25px, 25px);
+}
+.i-person{
+  @include icon(url(~/assets/img/icons/person.svg), 25px, 25px);
+}
+.i-cache{
+  @include icon(url(~/assets/img/icons/cache.svg), 25px, 25px);
+}
+.i-baggage{
+  @include icon(url(~/assets/img/icons/baggage.svg), 25px, 25px);
+}
+.i-time{
+  @include icon(url(~/assets/img/icons/time.svg), 25px, 25px);
+}
+.i-visa{
+  @include icon(url(~/assets/img/icons/visa.svg), 35px, 35px);
+}
+.i-mastercard{
+  @include icon(url(~/assets/img/icons/mastercard.svg), 35px, 35px);
+}

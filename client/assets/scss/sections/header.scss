@@ -1,0 +1,160 @@
+.header {
+  background: #fff;
+  margin: 0;
+  text-transform: uppercase;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+
+
+
+  @include mobile{
+    position: relative;
+  }
+  box-shadow: 0px 0px 8px 0px rgb(0 0 0 / 25%);
+
+  &-desc{
+    display: block;
+
+    @include mobile{
+      display: none;
+    }
+  }
+  &-mobile{
+    display: none;
+    height: 4rem;
+    padding: 0 15px;
+
+
+    .header-mobile__logo{
+      width: 200px;
+
+    }
+    .header-mobile__menu{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    @include mobile{
+      display: block;
+    }
+  }
+
+  span {
+    letter-spacing: 0.10em;
+
+  }
+
+
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &-flex {
+    display: flex;
+    align-items: center;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+
+  &-logo {
+    margin-right: 2rem;
+    align-self: baseline;
+    padding: 14px 0;
+
+    img{
+      height: 50px;
+    }
+
+    a:after {
+      display: none;
+    }
+  }
+
+  .currency {
+    margin-right: 0;
+  }
+
+  &-menu {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    &__item {
+      margin-right: 2rem;
+      position: relative;
+      padding: 20px 0;
+
+
+      &-content {
+        cursor: pointer;
+      }
+
+
+    }
+
+    .header-menu__item {
+
+
+      &:hover .header-menu__sub {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0px);
+
+      }
+    }
+
+    //.header-menu__item-content:hover ~ .header-menu__sub{
+    //  top: 2rem;
+    //  opacity: 1;
+    //  visibility: visible;
+    //
+    //}
+
+    &__sub {
+      z-index: 1;
+      opacity: 0;
+      transition: 300ms;
+      background: #fff;
+      box-shadow: 0px 0px 8px 0px rgb(0 0 0 / 25%);
+      position: absolute;
+      border-radius: 5px;
+      left: -5%;
+      top: 3rem;
+      transform: translateY(-50px);
+      padding: 10px !important;
+      visibility: hidden;
+
+
+      //&:hover > *{
+      //  top: 2rem;
+      //  opacity: 1;
+      //  visibility: visible;
+      //}
+
+      a {
+        color: #000;
+
+      }
+
+      li {
+        padding: 10px 5px;
+      }
+
+    }
+
+
+  }
+}

@@ -1,0 +1,123 @@
+.car-card {
+  display: flex;
+  min-width: 288px;
+  box-shadow: 0 1px 20px rgb(136 136 136 / 30%);
+  border-radius: 8px;
+  background-color: #fff;
+  overflow: hidden;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+
+
+
+  .icon {
+    margin-right: 0.5rem;
+  }
+
+  .border-card {
+    position: relative;
+    &:after {
+      content: '';
+      position: absolute;
+      z-index: 2;
+      top: 24px;
+      bottom: 20px;
+      right: 0;
+      width: 1.4px;
+      background-color: #f2f2f2;
+    }
+  }
+
+  .item-icon {
+    display: flex;
+    align-items: center;
+    padding: 0 5px 10px;
+  }
+
+  &__picture, &__description, &__offer{
+    width: 33.33%;
+
+    @include tablet{
+      width: 100%;
+    }
+  }
+
+  &__picture {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 50px;
+    position: relative;
+
+    @include mobile{
+      padding: 20px;
+    }
+    &--name{
+      text-align: center;
+      font-weight: 600;
+    }
+
+
+    &--thumb {
+      display: flex;
+      justify-content: center;
+
+      img {
+        max-width: 200px;
+      }
+    }
+
+  }
+
+  &__description {
+    padding: 50px;
+
+    @include mobile{
+      padding: 20px;
+      text-align: center;
+    }
+
+
+    &--class {
+      margin-bottom: 14px;
+      font-size: 25px;
+      font-weight: 700;
+      color: $dark;
+    }
+
+    &--baggage {
+      display: flex;
+      align-items: center;
+      margin: 0 -5px;
+      padding-bottom: 0.7rem;
+    }
+
+    &--services {
+      margin: 0 -5px;
+      padding-bottom: 1rem;
+    }
+  }
+  &__offer{
+    background: linear-gradient(to top, #d7e0e7, #d5eeff 63%);
+    display: flex;
+    flex-grow:  1 !important;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    @include mobile{
+      padding: 50px 0;
+    }
+
+    &--price{
+      font-weight: 700;
+      font-size: 25px;
+      margin-bottom: 1rem;
+    }
+    &--payments{
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
