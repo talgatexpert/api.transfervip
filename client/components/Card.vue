@@ -1,62 +1,85 @@
 <template>
-  <div class="car-card">
-    <div class="car-card__picture border-card">
-      <div class="car-card__picture--thumb">
-        <img src="https://fscdn.kiwitaxi.com/assets/images/vehicles/1.png" alt="Economy">
-      </div>
-      <div class="car-card__picture--name">
-        Skoda Octavia
-      </div>
+	<div class="car-card">
+		<div class="car-card__picture border-card">
+			<div class="car-card__picture--thumb">
+				<img :src="car.image" :alt="car.type">
+			</div>
+			<div class="car-card__picture--name">
+				{{ car.full_name }}
+			</div>
 
 
-    </div>
-    <div class="car-card__description">
-      <div class="car-card__description--class">
-        Economy
-      </div>
-      <div class="car-card__description--baggage">
-        <span class="item-icon"><i class="icon i-person"></i><span>5</span></span>
-        <span class="item-icon ">     <i class="icon i-baggage"></i><span>3</span></span>
-      </div>
-      <div class="car-card__description--services">
+		</div>
+		<div class="car-card__description">
+			<div class="car-card__description--class">
+				{{ car.type }}
+			</div>
+			<div class="car-card__description--baggage">
+				<span class="item-icon"><i class="icon i-person"></i><span>{{ car.person_quantity }}</span></span>
+				<span class="item-icon ">     <i class="icon i-baggage"></i><span>{{ car.baggage_quantity }} </span></span>
+			</div>
+			<div class="car-card__description--services">
 
-        <span class="item-icon"> <i class="icon i-close"></i> <span>Free cancellation</span></span>
-        <span class="item-icon"> <i class="icon i-time"></i> <span>15 min of waiting included</span></span>
-      </div>
-    </div>
-    <div class="car-card__offer">
-      <div class="car-card__offer--price">
-        58919 RUB
-      </div>
-      <button class="btn btn-green" @click="setTransfer(car_id)">Select</button>
-      <div class="car-card__offer--payments">
-        <i class="icon i-cache"></i>
-        <i class="icon i-mastercard"></i>
-        <i class="icon i-visa"></i>
-      </div>
-    </div>
-  </div>
+				<span class="item-icon"> <i class="icon i-close"></i> <span>Free cancellation</span></span>
+				<span class="item-icon"> <i class="icon i-time"></i> <span>15 min of waiting included</span></span>
+			</div>
+		</div>
+		<div class="car-card__offer">
+			<div class="car-card__offer--price">
+				{{ car.price }} {{ currency }}
+			</div>
+			<button class="btn btn-green" @click="setTransfer(car.id)">Select</button>
+			<div class="car-card__offer--payments">
+				<i class="icon i-cache"></i>
+				<i class="icon i-mastercard"></i>
+				<i class="icon i-visa"></i>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
+import Cookies from "js-cookie";
+
 export default {
-  name: "Card",
+	name: "Card",
 
-  props: {
-    car_id: String,
-  },
-  methods: {
-    randomInteger(min, max) {
-      return Math.floor(Math.random() * max) + min;
-    },
+	props: {
+		car_id: String,
+		name: String,
+		type: String,
+		price: String,
+		car: Object,
+		transferId: Number,
 
-    setTransfer(car_id) {
-      const rand = () => Math.random(0).toString(36).substr(2);
-      let booking_token = this.randomInteger(1, 9999999999);
-      this.$router.push({path: '/checkout', query: {booking_token, car_id}});
-    }
+	},
+	data() {
+		return {currency: 'TRY'}
+	},
 
-  },
+	mounted() {
+		this.currency = this.$route.query.currency
+		this.$nuxt.$on('update-currency', (currencyCode) => {
+			this.currency = currencyCode
+		})
+
+	},
+	methods: {
+		randomInteger(min, max) {
+			return Math.floor(Math.random() * max) + min;
+		},
+
+		async setTransfer(car_id) {
+			const currency = this.$route.query.currency;
+			await this.$store.dispatch('transfer/setBooking', {transfer_id: this.transferId, car_id, currency})
+			const token = await this.$store.getters['transfer/bookingToken']
+			await this.$router.push({
+				path: '/checkout',
+				query: {booking_token: token, car_id, transfer_id: this.transferId, currency}
+			});
+		}
+
+	},
 }
 </script>
 

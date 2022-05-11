@@ -27,7 +27,7 @@ class CarResource extends JsonResource
             $items[] = [
                 'id' => $resource->id,
                 'full_name' => $resource->name . ' ' . $resource->model,
-
+                'price' => $resource->price,
                 'name' => $resource->name,
                 'model' => $resource->model,
                 'type' => $resource->type ,

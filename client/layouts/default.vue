@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header />
-    <img  :src="require(`~/assets/img/${logo}`)"class="only-print" alt=""/>
+    <img  :src="require(`~/assets/img/${logo}`)" class="only-print" alt=""/>
 
     <div class="main-layout">
       <Nuxt/>

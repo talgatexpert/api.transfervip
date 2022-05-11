@@ -4,13 +4,15 @@
     <v-container>
       <v-row>
         <v-col cols="12" lg="6" md="6" sm="12">
-          <v-autocomplete :value="cityFrom" :items="citiesFrom" data-from="" v-model="cityFrom" @keyup="findCity"
+          <v-autocomplete :value="cityFrom" :items="citiesFrom" return-object data-from="" v-model="cityFrom"
+                          @keyup="findCity"
                           item-text="turkish"
-                          item-value="turkish" label="Nereden" :error-messages="errors.city_from"></v-autocomplete>
+                          item-value="id" label="Nereden" :error-messages="errors.city_from"></v-autocomplete>
         </v-col>
         <v-col cols="12" lg="6" md="6" sm="12">
-          <v-autocomplete :items="citiesTo" data-to @keyup="findCity" :error-messages="errors.city_to" v-model="cityTo"
-                          item-text="turkish" item-value="turkish"
+          <v-autocomplete :items="citiesTo" data-to @keyup="findCity" return-object :error-messages="errors.city_to"
+                          v-model="cityTo"
+                          item-text="turkish" item-value="id"
                           label="Nereye"></v-autocomplete>
         </v-col>
         <v-col cols="12" lg="3" md="12">
@@ -19,15 +21,6 @@
             label="KDV"
             prepend-icon="mdi-percent"
             :error-messages="errors.tax"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" lg="3" md="12">
-          <v-text-field
-            v-model="price"
-            label="Fiyat TL"
-            hint="Sistem tarafından otomatik olarak USD ve eur'ye dönüştürülür"
-            :error-messages="errors.price"
-
           ></v-text-field>
         </v-col>
         <v-col cols="12" lg="3" md="12">
@@ -73,10 +66,13 @@
               ></v-text-field>
             </template>
             <v-date-picker
-              :value="started_at"
-              reactive
               no-title
+              :value="started_at"
+              locale="tr"
               :min="today"
+
+              first-day-of-week="1"
+              v-model="started_at"
               @input="menu1 = false"
             ></v-date-picker>
           </v-menu>
@@ -107,21 +103,27 @@
               ></v-text-field>
             </template>
             <v-date-picker
-              v-model="ended_at"
               no-title
-              :min="started_at"
+              :value="ended_at"
+              locale="tr"
+              :min="today"
+              first-day-of-week="1"
+              v-model="ended_at"
               @input="menu2 = false"
             ></v-date-picker>
           </v-menu>
         </v-col>
         <v-col cols="12" lg="12" md="12">
           <v-autocomplete
-            v-model="selectedCars"
+            :value="selected_cars"
+            v-model="selected_cars"
             :items="cars"
             @keyup="findCars"
+
             label="Select"
             item-text="full_name"
             item-value="id"
+            return-object
             multiple
             :error-messages="errors.selected_cars"
 
@@ -132,12 +134,12 @@
                 :input-value="data.selected"
                 close
                 @click="data.select"
-                @click:close="remove(data.item)"
+                @click:close="remove(data.item.id)"
               >
                 <v-avatar left>
                   <v-img :src="data.item.image"></v-img>
                 </v-avatar>
-                {{ data.item.name }}
+                {{ data.item.full_name }}
               </v-chip>
             </template>
             <template v-slot:item="data">
@@ -145,18 +147,38 @@
                 <v-list-item-content v-text="data.item"></v-list-item-content>
               </template>
               <template v-else>
-                <v-list-item-avatar>
-                  <img :src="data.item.image" alt="">
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title v-html="data.item.full_name"></v-list-item-title>
-                </v-list-item-content>
+                <div class="d-flex">
+                  <v-list-item-avatar>
+                    <img :src="data.item.image" alt="">
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title v-html="data.item.full_name"></v-list-item-title>
+                  </v-list-item-content>
+                </div>
               </template>
             </template>
           </v-autocomplete>
+          <v-row class="mb-5">
+            <v-col cols="12" md="3" v-for="(car, key) in selected_cars" :key="key">
+              <car_card :loading="false"
+                        :id="car.id"
+                        :name="car.full_name"
+                        :baggage_quantity="car.baggage_quantity"
+                        :person_quantity="car.person_quantity"
+                        :type="car.type"
+                        :image="car.image"
+                        :car="car"
+                        :price="car.price"
+                        :remove="remove"
+                        @changePrice="editPrice($event, car.id)"
+
+              />
+            </v-col>
+          </v-row>
         </v-col>
 
         <v-col cols="12" md="12">
+          <v-divider></v-divider>
           <v-textarea
             v-model="description"
             name="input-7-1"
@@ -164,7 +186,7 @@
             hint="Transferinizin açıklamasını burada yazabilirsiniz"
           ></v-textarea>
 
-          <v-btn block depressed @click="save"
+          <v-btn block depressed class="mt-5" @click="save"
                  color="primary">Kaydetmek
           </v-btn>
         </v-col>
@@ -176,6 +198,7 @@
 
 <script>
 import HeaderAdmin from "../../../components/admin/HeaderAdmin";
+import car_card from "../../../components/admin/car_card";
 import Vue from 'vue'
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
@@ -186,10 +209,11 @@ if (!Vue.moment) {
   })
 }
 
+
 export default {
   name: "id",
   layout: 'admin',
-  components: {HeaderAdmin},
+  components: {HeaderAdmin, car_card},
   data() {
     return {
       breadcrumbsList: [
@@ -210,13 +234,14 @@ export default {
         },
       ],
       citiesFrom: [],
+      select: [],
       citiesTo: [],
       description: '',
       tax: '0%',
       price: '',
       penalty: '50%',
       cancel_time: '24',
-      started_at: (new Date('2022-04-15')).toISOString(),
+      started_at: '',
       ended_at: '',
       range_date: [],
       errors: [],
@@ -224,7 +249,7 @@ export default {
       endDateFormatted: '',
       menu1: false,
       menu2: false,
-      selectedCars: [],
+      selected_cars: [],
       cars: [],
       cityFrom: '',
       cityTo: '',
@@ -235,23 +260,60 @@ export default {
 
   async asyncData({app, route}) {
     await app.store.dispatch('panel/city/SEARCH_CITIES', '?search=' + '&limit=5&language=turkish&');
-    const citiesFrom = await app.store.getters['panel/city/GET_CITIES']
-    const citiesTo = await app.store.getters['panel/city/GET_CITIES']
+    let fromCities = await app.store.getters['panel/city/GET_CITIES']
+    let toCities = await app.store.getters['panel/city/GET_CITIES']
+    await app.store.dispatch('panel/car/SEARCH_CAR', '?search=' + '&limit=5');
+    let allCars = await app.store.getters['panel/car/GET_CARS']
+    let cars = [];
+    let citiesFrom = [];
+    let citiesTo = [];
+
+    function removeDuplicates(originalArray, prop) {
+      var newArray = [];
+      var lookupObject = {};
+
+      for (var i in originalArray) {
+        lookupObject[originalArray[i][prop]] = originalArray[i];
+      }
+
+      for (i in lookupObject) {
+        newArray.push(lookupObject[i]);
+      }
+      return newArray;
+    }
+
+    cars.push(...allCars);
+    citiesFrom.push(...fromCities);
+    citiesTo.push(...toCities)
     let data = {};
     if (route.params.id !== "new") {
       await app.store.dispatch('panel/transfer/GET_ONE', {id: route.params.id})
       const transfer = await app.store.getters['panel/transfer/GET_ONE'];
+      let selected_cars = [...transfer.cars]
+      citiesFrom.push({
+        turkish: transfer.start_city.name,
+        id: transfer.start_city.id
+      });
+      citiesTo.push({
+        turkish: transfer.end_city.name,
+        id: transfer.end_city.id
+      });
 
 
+      cars.push(...transfer.cars)
+      cars = removeDuplicates(cars, 'id')
+      citiesFrom = removeDuplicates(citiesFrom, 'id')
+      citiesTo = removeDuplicates(citiesTo, 'id')
       data = {
+        selected_cars,
         citiesFrom, citiesTo,
+        cars,
+
 
         cityFrom: {
           turkish: transfer.start_city.name,
           id: transfer.start_city.id
         },
-
-
         cityTo: {
           turkish: transfer.end_city.name,
           id: transfer.end_city.id
@@ -262,18 +324,20 @@ export default {
         penalty: transfer.penalty,
         cancel_time: transfer.cancel_time,
         description: transfer.description,
-        startDateFormatted: moment((new Date('2022-04-15')).toISOString()).format('DD/MM/YYYY'),
-        endDateFormatted: moment(transfer.ended_at).format('DD/MM/YYYY'),
-        // started_at: moment(transfer.started_at).toDate().toISOString()
-
+        startDateFormatted: moment(transfer.started_at, 'DD.MM.YYYY').format('DD/MM/YYYY'),
+        endDateFormatted: moment(transfer.ended_at, 'DD.MM.YYYY').format('DD/MM/YYYY'),
+        started_at: moment(transfer.started_at, 'DD.MM.YYYY').format('YYYY-MM-DD'),
+        ended_at: moment(transfer.ended_at, 'DD.MM.YYYY').format('YYYY-MM-DD'),
 
       }
 
+
+    } else {
+      data = {
+        cars: [...allCars],
+        citiesFrom, citiesTo
+      }
     }
-    // if (this.id !== false){
-    //
-    // }
-    console.log(data)
 
     return data
   },
@@ -288,6 +352,7 @@ export default {
   },
   computed: {
     pageTitle() {
+
       let title = '';
       if (this.$route.query.hasOwnProperty('from')) {
         return 'Transfer ' + this.$route.query.from + ' düzenle';
@@ -299,23 +364,24 @@ export default {
       return (new Date()).toISOString()
     }
   },
-  async created() {
 
-    await this.$store.dispatch('panel/car/SEARCH_CAR', '?search=' + '&limit=5');
-    this.cars = await this.$store.getters['panel/car/GET_CARS']
-  },
   methods: {
-    remove(item) {
-      let index = this.cars.indexOf(item.id)
-      this.selectedCars.splice(index, 1)
+    editPrice(e, id) {
+      const items = JSON.parse(JSON.stringify(this.selected_cars));
+
+      this.selected_cars = items.map(item => {
+        if (item.id === id) {
+          item.price = e;
+        }
+        return item
+      })
+    },
+    remove(id) {
+      let index = this.selected_cars.findIndex(item => item.id === id)
+      if (index > -1)
+        this.selected_cars.splice(index, 1)
     },
 
-    formatDate(date) {
-      if (!date) return
-
-      const [year, month, day] = date.split('-')
-      return `${day}/${month}/${year}`
-    },
 
     async findCity(e) {
       const value = e.target.value.trim();
@@ -342,17 +408,22 @@ export default {
     async save() {
       await this.$store.dispatch('panel/transfer/CLEAR_ERROR');
 
+      if (this.cityTo instanceof Object) {
+
+      }
+
+
       const payload = {
-        selected_cars: this.selectedCars,
-        city_from: this.cityFrom,
-        city_to: this.cityTo,
+        selected_cars: this.selected_cars,
+        city_from: this.cityFrom.id,
+        city_to: this.cityTo.id,
         tax: parseInt(this.tax.replace('/\D+/g', '')),
         price: this.price,
         started_at: this.started_at,
         ended_at: this.ended_at,
         description: this.description,
-        cancel_time: parseInt(this.cancel_time.replace('/\D+/g', '')),
-        penalty: parseInt(this.penalty.replace('/\D+/g', '')),
+        cancel_time: parseInt(this.cancel_time),
+        penalty: parseInt(this.penalty),
       };
       const checkOwnProperty = (obj, propertyName) => (obj && (typeof obj == "object" || typeof obj == "function") && Object.prototype.hasOwnProperty.call(obj, propertyName));
 

@@ -74,5 +74,69 @@ module.exports = {
     country: 'Ülke',
     email: 'E-posta',
   },
+  checkout: {
+    progressBar: {
+      step_1: 'Transfer rezervasyonu',
+      step_2: 'Ödeme',
+      step_3: 'Onaylama',
+    },
+    paymentMethods: {
+      title: 'Ödeme yöntemleri',
+      card: {
+        name: {
+          label: 'İsim',
+          placeholder: 'İsim soyisim'
+        },
+        card: {
+          label: 'Kart Numarası',
+          placeholder: 'Kart Numarası'
+        },
+        expiration: {
+          label: 'Son kullanma tarihi'
+        },
+        security: {
+          label: 'Güvenlik Kodu',
+          placeholder: 'Kod'
+        }
+      },
+      by_card: 'Web sitesinde kartla',
+      by_cash: 'Sürücüye nakit'
+    },
+    transfer_details: {
+      title: 'Transfer detayları',
+      change: 'Değiştir',
+      travel_time: 'Seyahat süresi: ~ 1 h',
+      address: 'Kalkış: otel adı veya adresi *',
+      flight_number: 'Uçuş Numarası *',
+      return_trip: 'Dönüş yolculuğu',
+
+      passengers: {
+        title: 'Yolcular',
+        number: 'Yolcu sayısını belirtin',
+        sub_number: 'Çocuklar ve bebekler dahil',
+        child_seat: 'Çocuk koltukları ekle',
+        sub_child_seat: 'Çocuklar sizinle birlikte seyahat ediyorsa bu gereklidir.',
+      },
+      passengers_details: {
+        title: 'Yolcu detayları',
+        name_surname: 'Adı ve soyadı *',
+        email: 'E-posta *',
+        sub_email: 'Bu e-posta adresine bir rezervasyon onayı, kupon ve hatırlatıcı göndereceğiz.',
+        phone: 'Ülke kodu ile telefon numarası *',
+        sub_phone: 'Sizinle acil iletişim için ona ihtiyacımız var. Transfer günü müsait olmalıdır.',
+        privacy: 'İletişim bilgilerinizi girerek Gizlilik Politikamızı kabul etmiş olursunuz.',
+      },
+      errors: {
+        address: 'Adresi veya otel adını girin.',
+        flight_number: 'Uçuş numarasını girin',
+        name: 'Adınızı ve soyadınızı girin.',
+        email: 'E-posta adresinizi girin.',
+        phone: 'Telefon numarasını girin.',
+      }
+
+    }
+
+  },
+
 }
 

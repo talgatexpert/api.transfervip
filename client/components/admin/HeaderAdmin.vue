@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import Breadcrumbs from "../Breadcrumbs";
 export default {
   name: "HeaderAdmin",
   props: {
@@ -25,7 +26,8 @@ export default {
     breadcrumbsList: Array,
     pageTitle: String,
     showUpdate: Boolean | false
-  }
+  },
+	components: {Breadcrumbs},
 }
 </script>
 

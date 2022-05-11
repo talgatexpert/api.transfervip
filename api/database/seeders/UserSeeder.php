@@ -16,9 +16,9 @@ class UserSeeder extends Seeder
     public function run()
     {
         $user = new User();
-        $user->name = env('SUPER_ADMIN_NAME');
-        $user->email = env('SUPER_ADMIN_EMAIL');
-        $user->password = bcrypt(env('SUPER_ADMIN_PASSWORD'));
+        $user->name = env('SUPER_ADMIN_NAME', 'Fatih Celik');
+        $user->email = env('SUPER_ADMIN_EMAIL', 'admin@vitotransfer.ru');
+        $user->password = bcrypt(env('SUPER_ADMIN_PASSWORD', '123'));
         $user->role_id = User::ROLES['super_admin'];
         $user->save();
         User::factory()->count(50)->create();

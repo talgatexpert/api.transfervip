@@ -1,3 +1,5 @@
+import {CARS_URL, TRANSFERS_URL} from "~/routes/panel";
+
 export const state = () => ({
   transfers: [],
   total: 0,
@@ -25,7 +27,7 @@ export const mutations = {
 }
 export const actions = {
   async GET_TRANSFERS({commit}, payload) {
-    await this.$axios.get('transfers/' + payload).then(result => {
+    await this.$axios.get(TRANSFERS_URL + payload).then(result => {
       commit('SET_TRANSFERS', result.data.data.transfers)
       commit('SET_TOTAL', result.data.data.total)
     }).catch(error => {
@@ -33,7 +35,7 @@ export const actions = {
     })
   },
   async GET_ONE({commit}, payload) {
-    await this.$axios.get('transfers/' + payload.id).then(result => {
+    await this.$axios.get(TRANSFERS_URL + payload.id).then(result => {
       commit('SET_TRANSFER', result.data.data.transfer)
     }).catch(error => {
       commit('SET_ERROR', error.response.data.errors)
@@ -41,7 +43,7 @@ export const actions = {
   },
 
   async GET_CARS({commit}, payload){
-    await this.$axios.get('cars?search=' + payload.name).then(result => {
+    await this.$axios.get(CARS_URL + '?search=' + payload.name).then(result => {
       commit('SET_CARS', result.data.data);
     }).catch(error => {
       commit('SET_ERROR', error.response.data.errors)
@@ -51,14 +53,14 @@ export const actions = {
   async SAVE_TRANSFER({commit}, payload){
 
     if (!payload.id){
-        await this.$axios.post('transfers', payload).then(result => {
+        await this.$axios.post(TRANSFERS_URL, payload).then(result => {
           commit('SET_CARS', result.data.data);
           commit('SET_TOTAL', result.data.data.total)
         }).catch(error => {
           commit('SET_ERROR', error.response.data.errors)
         })
     }else{
-      await this.$axios.put('transfers/' + payload.id , payload).then(result => {
+      await this.$axios.put(TRANSFERS_URL + payload.id , payload).then(result => {
         commit('SET_CARS', result.data.data);
         commit('SET_TOTAL', result.data.data.total)
       }).catch(error => {
@@ -71,7 +73,14 @@ export const actions = {
     commit('SET_ERROR', [])
   },
   async SEARCH_TRANSFERS({commit}, payload){
+    await this.$axios.get(TRANSFERS_URL + '?search=' + payload).then(result => {
+      commit('SET_TRANSFERS', result.data.data.transfers);
+      commit('SET_TOTAL')
+    }).catch(error => {
 
+      console.log(error)
+      commit('SET_ERROR', error.response.data.errors)
+    })
   }
 }
 

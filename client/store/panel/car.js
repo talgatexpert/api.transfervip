@@ -1,4 +1,4 @@
-
+import {CARS_URL} from "~/routes/panel";
 
 export const state = () => ({
   cars: [],
@@ -23,8 +23,7 @@ export const mutations = {
 }
 export const actions = {
   async GET_CARS({commit}, route) {
-    const url = `cars${route}`;
-    await this.$axios.get(url).then(result => {
+    await this.$axios.get(CARS_URL + route).then(result => {
       commit('SET_CARS', result.data.data.cars)
       commit('SET_TOTAL', result.data.data.total)
     }).catch(error => {
@@ -48,7 +47,7 @@ export const actions = {
     }
     await this.$axios({
       method: 'POST',
-      url: 'cars/',
+      url: 'panel/cars/',
       data: formData,
       config: config
     }).then(result => {
@@ -84,7 +83,7 @@ export const actions = {
     }
     await this.$axios({
       method: 'POST',
-      url: 'cars/' + payload.id,
+      url: CARS_URL + payload.id,
       data: formData,
       config: config
     }).then(result => {
@@ -96,8 +95,7 @@ export const actions = {
     })
   },
   async SEARCH_CAR({commit}, payload) {
-    const url = `cars${payload}`;
-    await this.$axios.get(url).then(result => {
+    await this.$axios.get(CARS_URL + payload).then(result => {
       commit('SET_CARS', result.data.data.cars)
       commit('SET_TOTAL', result.data.data.total)
     }).catch(error => {
@@ -105,7 +103,7 @@ export const actions = {
     })
   },
   async DELETE_CAR({commit}, payload) {
-      await this.$axios.delete('cars/' + payload.id).then(result => {
+      await this.$axios.delete(CARS_URL + payload.id).then(result => {
         commit('SET_CARS', result.data.data.cars)
           commit('SET_TOTAL', result.data.data.total)
       }).catch(error => {

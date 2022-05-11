@@ -1,3 +1,5 @@
+import {CITIES_URL} from "~/routes/panel";
+
 export const state = () => ({
   cities: [],
   total: 0,
@@ -22,8 +24,7 @@ export const mutations = {
 export const actions = {
 
   async GET_CITIES({commit}, route) {
-    const url = `city${route}`;
-    await this.$axios.get(url).then(result => {
+    await this.$axios.get(CITIES_URL + route).then(result => {
 
 
       const data = result.data.data.cities.map(item => {
@@ -39,10 +40,7 @@ export const actions = {
     })
   },
   async SEARCH_CITIES({commit}, route) {
-    const url = `city${route}`;
-    await this.$axios.get(url).then(result => {
-
-
+    await this.$axios.get(CITIES_URL + route).then(result => {
       const data = result.data.data.cities.map(item => {
         return {
           id: item.id,
@@ -56,7 +54,7 @@ export const actions = {
     })
   },
   async UPDATE_CITY({commit}, payload) {
-    await this.$axios.put('city/' + payload.id, {
+    await this.$axios.put(CITIES_URL + payload.id, {
       cities: payload.cities,
       name: payload.name
     }).then(result => {
@@ -75,7 +73,7 @@ export const actions = {
     })
   },
   async DELETE_CITY({commit}, payload) {
-    await this.$axios.delete('city/' + payload.id).then(result => {
+    await this.$axios.delete(CITIES_URL + payload.id).then(result => {
       const data = result.data.data.cities.map(item => {
         return {
           id: item.id,
@@ -90,7 +88,7 @@ export const actions = {
     })
   },
   async CREATE_CITY({commit}, payload) {
-    await this.$axios.post('city', {
+    await this.$axios.post(CITIES_URL, {
       name: payload.name,
       cities: payload.cities
     }).then(result => {

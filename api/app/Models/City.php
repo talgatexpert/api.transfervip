@@ -11,13 +11,18 @@ use Spatie\Translatable\HasTranslations;
 class City extends Model
 {
     use HasFactory, HasTranslations, Sluggable;
+
     protected $fillable = ['name'];
 
     protected $casts = ['translations' => 'object'];
     public array $translatable = ['translations'];
 
+    public function scopeWhereSlug($query, $data)
+    {
+        $query->where('slug', $data);
+    }
 
-   public function sluggable(): array
+    public function sluggable(): array
     {
         return [
             'slug' => [

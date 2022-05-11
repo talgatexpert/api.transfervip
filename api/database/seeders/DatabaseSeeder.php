@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         CompanySeeder::class,
         CitySeeder::class,
         CarSeeder::class,
-        TransferSeeder::class,
+//        TransferSeeder::class,
     ];
     public array $productionSeeders = [
         SettingSeeder::class,

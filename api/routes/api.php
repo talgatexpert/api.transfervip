@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::group(['middleware' => [ 'auth:sanctum']], function () {
+Route::group(['middleware' => [ 'auth:sanctum'], 'prefix' => 'panel'], function () {
     Route::apiResource('city', \App\Http\Controllers\Api\Admin\CityController::class);
     Route::get('cars', [\App\Http\Controllers\Api\Admin\CarController::class, 'index']);
     Route::post('cars',  [\App\Http\Controllers\Api\Admin\CarController::class,'store']);
@@ -40,5 +40,9 @@ Route::post('contact/email', [\App\Http\Controllers\Api\MailController::class, '
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::get('transfer/cities', [\App\Http\Controllers\Api\CityController::class, 'index']);
+Route::get('transfers/{cityFrom}/{cityTo}', [\App\Http\Controllers\Api\TransferController::class, 'index']);
+Route::post('bookings', [\App\Http\Controllers\Api\BookingController::class, 'store']);
+Route::get('bookings/{booking_token}', [\App\Http\Controllers\Api\BookingController::class, 'show']);
+Route::put('bookings/{booking_token}', [\App\Http\Controllers\Api\BookingController::class, 'update']);
 
 

@@ -17,9 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('start_city_id');
             $table->integer('finish_city_id');
-            $table->integer('car_id');
             $table->float('tax');
-            $table->decimal('price');
             $table->integer('cancel_time')->default(24);
             $table->integer('penalty')->default(50);
             $table->integer('company_id')->default(0);

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Resources\Api;
+namespace App\Http\Resources\Api\Client;
 
+use App\Services\CurrencyConverterService;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class TransferResource extends JsonResource
 {
+
+
     /**
      * Transform the resource into an array.
      *
@@ -20,14 +23,9 @@ class TransferResource extends JsonResource
         if ($this->resource instanceof LengthAwarePaginator || $this->resource instanceof Collection) {
             return [
                 'total' => $this->resource->count(),
-                'transfers' => $this->items(),
+                'items' => $this->items(),
             ];
         }
-        return [
-            'transfer' => $this->prepare($this->resource),
-        ];
-
-
     }
 
     public function items(): array
@@ -64,24 +62,24 @@ class TransferResource extends JsonResource
             'created_at' => $resource->created_at->format('d.m.Y'),
             'updated_at' => $resource->updated_at->format('d.m.Y'),
             'cars' => $this->makeCars($resource->cars, $resource),
-            'car_models' => $this->getModels($resource->cars)
         ];
     }
 
-    public function getModels(Collection $cars, $separator = ','): string
-    {
-        $items = '';
-        foreach ($cars as $car) {
-            $items .= $car->name . ' ' . $car->model . $separator;
-        }
-        return rtrim($items, $separator);
-    }
 
     public function makeCars(Collection $cars, $resource): array
     {
+        $converterService = new  CurrencyConverterService();
+        $currency = request('currency') ?? null;
+
         $result = [];
         foreach ($cars as $car) {
             $price = DB::table('transfer_cars')->select('price')->where('transfer_id', $resource->id)->where('car_id', $car->id)->first();
+            $tax = $resource->company?->tax;
+            $rates = $converterService->convert($price->price, $currency);
+            $withTax = ceil(($rates / 100 * $tax) + $rates);
+            $ifCurrencyRateNotWorking = ceil((ceil($price->price) / 100 * $tax) + $price->price);
+            $price = $rates !== false ? $withTax : $ifCurrencyRateNotWorking;
+
             $result[] = [
                 'id' => $car->id,
                 'name' => $car->name,
@@ -89,11 +87,9 @@ class TransferResource extends JsonResource
                 'full_name' => $car->name . ' ' . $car->model,
                 'image' => $car->image,
                 'type' => $car->type,
-                'price' => $price->price,
+                'price' => $price,
                 'person_quantity' => $car->person_quantity,
                 'baggage_quantity' => $car->baggage_quantity,
-                'company_id' => $car->company_id,
-                'user_id' => $car->user_id,
             ];
         }
         return $result;

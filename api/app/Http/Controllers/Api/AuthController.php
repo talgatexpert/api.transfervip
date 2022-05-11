@@ -31,13 +31,14 @@ class AuthController extends Controller
             $user = auth()->user();
 
             $token = explode('|', $this->generateToken($user));
-            return response(['user' => $user,
+            return response( ['data' =>
+                ['user' => $user,
                 'name' => $user->name,
                 'role_id' => (int)$user->role_id,
                 'role' => User::ROLE_TEXT[(int)$user->role_id],
                 'hidden_role' => $user->getRole(),
                 'permissions' => $user->getPermissions(),
-                'token' => $token[1]]);
+                'token' => $token[1]]]);
         } else {
             return response(['errors' => [
                 'message' => 'The provided credentials are incorrect.',

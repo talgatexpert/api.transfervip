@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Transfer extends Model
 {
     use HasFactory, SoftDeletes;
+
 
 
     protected $dates = [
@@ -31,8 +33,20 @@ class Transfer extends Model
         return $this->belongsTo(City::class, 'finish_city_id');
     }
 
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+
     public function cars()
     {
-        return $this->belongsTo(Car::class, 'car_id');
+        return $this->belongsToMany(Car::class, 'transfer_cars', 'transfer_id', 'car_id');
+    }
+
+    public function setCars($ids)
+    {
+        $this->cars()->sync($ids);
     }
 }

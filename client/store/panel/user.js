@@ -1,4 +1,5 @@
 import axios from "axios";
+import {ROLES_URL, USERS_URL} from "~/routes/panel";
 
 export const state = () => ({
   users: [],
@@ -8,6 +9,7 @@ export const state = () => ({
   role: '',
   hidden_roles: [],
 });
+
 
 export const mutations = {
   SET_USERS(state, payload) {
@@ -32,8 +34,7 @@ export const mutations = {
 }
 export const actions = {
   async GET_USERS({commit}, route) {
-    const url = `users${route}`;
-    await this.$axios.get(url).then(result => {
+    await this.$axios.get(USERS_URL + route).then(result => {
       commit('SET_USERS', result.data.data.users)
       commit('SET_ROLES', result.data.data.roles)
       commit('SET_TOTAL', result.data.data.total)
@@ -45,7 +46,7 @@ export const actions = {
 
 
 
-    await this.$axios.post('users', {
+    await this.$axios.post(USERS_URL, {
       name: payload.name,
       password: payload.password,
       email: payload.email,
@@ -68,7 +69,7 @@ export const actions = {
 
   },
   async UPDATE_USER({commit}, payload) {
-    await this.$axios.put('users/' + payload.id, {
+    await this.$axios.put(USERS_URL + payload.id, {
       name: payload.name,
       email: payload.email,
       active: payload.active,
@@ -83,8 +84,7 @@ export const actions = {
     })
   },
   async SEARCH_USER({commit}, payload) {
-    const url = `users${payload}`;
-    await this.$axios.get(url).then(result => {
+    await this.$axios.get(USERS_URL + payload).then(result => {
       commit('SET_USERS', result.data.data.users)
       commit('SET_ROLES', result.data.data.roles)
       commit('SET_TOTAL', result.data.data.total)
@@ -93,7 +93,7 @@ export const actions = {
     })
   },
   async DELETE_USER({commit}, payload) {
-      await this.$axios.delete('users/' + payload.id).then(result => {
+      await this.$axios.delete('panel/users/' + payload.id).then(result => {
         commit('SET_USERS', result.data.data.users)
         commit('SET_ROLES', result.data.data.roles)
         commit('SET_TOTAL', result.data.data.total)
@@ -103,7 +103,7 @@ export const actions = {
   },
 
   async GET_TARGET_ROLE({commit}){
-    this.$axios.get('user/roles').then(result => {
+    this.$axios.get(ROLES_URL).then(result => {
       commit('SET_ROLE', result.data.data.role)
       commit('SET_HIDDEN_ROLES', result.data.data.roles)
     }).catch(error => {

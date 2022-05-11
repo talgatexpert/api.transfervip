@@ -14,106 +14,38 @@
         <v-toolbar
           flat
         >
-          <v-toolbar-title>Transfer listesi</v-toolbar-title>
-          <v-divider
-            class="mx-4"
-            inset
-            vertical
-          ></v-divider>
-          <v-spacer></v-spacer>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            @input="searchCity"
-            hide-details
-          ></v-text-field>
-          <v-spacer></v-spacer>
-          <v-dialog
-            v-model="dialog"
-            max-width="500px"
-          >
-            <template v-slot:activator="{ on, attrs }">
+          <v-row class="mt-3">
+            <v-col cols="12" lg="4" md="8" sm="12">
+              <v-toolbar-title>Transfer listesi</v-toolbar-title>
+            </v-col>
+            <v-col cols="12" lg="6" md="8" sm="8">
+
+              <v-spacer></v-spacer>
+
+
+              <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                class="col-sm-12"
+                @input="searchTransfer"
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" lg="2" md="4" sm="4">
+              <v-spacer></v-spacer>
               <v-btn
                 color="primary"
                 dark
-                class="mb-2"
-                v-bind="attrs"
-                v-on="on"
-                @click="editItem()"
+                class="mb-2 col-sm-12"
+                to="/panel/transfers/new"
               >
-                New Item
+                Yeni transfer
               </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="text-h5">{{ formTitle }}</span>
-              </v-card-title>
+            </v-col>
+          </v-row>
 
-              <v-card-text>
-                <v-container>
-                  <v-row>
-
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field
-                        v-model="editedItem.id"
-                        placeholder="Antalya"
-                        label="Turkish"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field
-                        v-model="editedItem.russian"
-                        label="Russian"
-                        placeholder="Анталья"
-
-                      ></v-text-field>
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field
-                        v-model="editedItem.english"
-                        label="English"
-                        placeholder="Antalya"
-
-                      ></v-text-field>
-                    </v-col>
-
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="close"
-                >
-                  Cancel
-                </v-btn>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="save"
-                >
-                  Save
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
           <v-dialog v-model="dialogDelete" max-width="500px">
             <v-card>
               <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
@@ -187,8 +119,8 @@ export default {
           value: 'id',
         },
         {text: 'Yön', value: 'direction'},
-        {text: 'Araçlar', value: 'cars.full_name'},
-        {text: 'Fiyat TL', value: 'price'},
+        {text: 'Araçlar', value: 'car_models'},
+        // {text: 'Fiyat TL', value: 'price'},
         {text: 'Komisyon', value: 'tax'},
         {text: 'İptal Süresi', value: 'cancel_time'},
         {text: 'Ceza %', value: 'penalty'},
@@ -285,7 +217,7 @@ export default {
       this.transfers = await this.$store.getters['panel/transfer/GET_TRANSFERS']
     },
 
-    async searchCity() {
+    async searchTransfer() {
       const value = this.search.trim();
       let params = this.buildQuery() + '&search=' + value;
 
@@ -293,8 +225,8 @@ export default {
         await this.$store.dispatch('panel/transfer/SEARCH_TRANSFERS', params);
         this.$data.transfers = await this.$store.getters['panel/transfer/GET_TRANSFERS']
         this.$data.totalNumberOfItems = await this.$store.getters['panel/transfer/GET_TOTAL']
-      }else{
-        await this.$store.dispatch('panel/transfer/GET_TRANSFERS' , '?page=1&limit=10&orderby=id');
+      } else {
+        await this.$store.dispatch('panel/transfer/GET_TRANSFERS', '?page=1&limit=10&orderby=id');
         this.$data.transfers = await this.$store.getters['panel/transfer/GET_TRANSFERS']
         this.$data.totalNumberOfItems = await this.$store.getters['panel/transfer/GET_TOTAL']
       }
@@ -319,9 +251,9 @@ export default {
     editItem(item) {
       this.editedIndex = this.transfers.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      if (this.editedItem.id){
+      if (this.editedItem.id) {
         this.$router.push('/panel/transfers/' + this.editedItem.id + '?from=' + this.editedItem.direction)
-      } else{
+      } else {
         this.$router.push('/panel/transfers/new')
       }
     },
@@ -402,7 +334,7 @@ export default {
       // check if old and new query are the same - VueRouter will not change the route if they are, so probably this is the first page loading
 
       await this.$router.replace({...this.$router.currentRoute, query: obj}).catch((error) => {
-        console.log('CITIES ERROR')
+        console.log('TRANSFER ERROR')
       });
     },
   },

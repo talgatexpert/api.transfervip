@@ -308,3 +308,12 @@
     }
 
 }
+.vue-credit-card .card-form-and-image .credit-card-form .field {
+  position: relative;
+  width: 100%;
+  flex-direction: column;
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
