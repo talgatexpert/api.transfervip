@@ -79,7 +79,7 @@ class TransferResource extends JsonResource
             $withTax = ceil(($rates / 100 * $tax) + $rates);
             $ifCurrencyRateNotWorking = ceil((ceil($price->price) / 100 * $tax) + $price->price);
             $price = $rates !== false ? $withTax : $ifCurrencyRateNotWorking;
-
+            $price = request('return_trip') == 'true' ? $price * 2 : $price;
             $result[] = [
                 'id' => $car->id,
                 'name' => $car->name,

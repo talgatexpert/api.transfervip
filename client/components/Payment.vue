@@ -7,10 +7,11 @@
 			<div class="payments">
 				<div class="radio-custom">
 					<div class="d-flex justify-content-between align-items-center">
-						<div>
+						<div class="radio-custom__flex">
 							<input type="radio" @input="changePayment" v-model="paymentMethod" value="card" id="card_website"
 							       name="radio-group">
-							<label for="card_website">{{ $t('checkout.paymentMethods.by_card') }}</label>
+							<label for="card_website"></label>
+							<span>{{ $t('checkout.paymentMethods.by_card') }}</span>
 						</div>
 						<div class="icons d-flex">
 							<i class="i-mastercard mr-3"></i>
@@ -18,10 +19,12 @@
 						</div>
 					</div>
 				</div>
+				<div class="radio-custom__flex">
 				<div class="radio-custom">
 					<input type="radio" @input="changePayment" v-model="paymentMethod" value=cash id="cash" name="radio-group">
-					<label for="cash"> {{ $t('checkout.paymentMethods.by_cash') }}
-					</label>
+					<label for="cash"></label>
+					<span>{{ $t('checkout.paymentMethods.by_cash') }}</span>
+				</div>
 				</div>
 			</div>
 

@@ -36,13 +36,19 @@ Route::group(['middleware' => [ 'auth:sanctum'], 'prefix' => 'panel'], function 
 
 });
 
-Route::post('contact/email', [\App\Http\Controllers\Api\MailController::class, 'sendEmail'] );
+Route::post('contact.blade.php/email', [\App\Http\Controllers\Api\MailController::class, 'sendEmail'] );
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::get('transfer/cities', [\App\Http\Controllers\Api\CityController::class, 'index']);
 Route::get('transfers/{cityFrom}/{cityTo}', [\App\Http\Controllers\Api\TransferController::class, 'index']);
 Route::post('bookings', [\App\Http\Controllers\Api\BookingController::class, 'store']);
+Route::get('city/{cityName}', [\App\Http\Controllers\Api\CityController::class, 'show']);
+Route::post('corporate', [\App\Http\Controllers\Api\CorporateController::class, 'send']);
 Route::get('bookings/{booking_token}', [\App\Http\Controllers\Api\BookingController::class, 'show']);
 Route::put('bookings/{booking_token}', [\App\Http\Controllers\Api\BookingController::class, 'update']);
+Route::put('bookings/{booking_token}/confirm', [\App\Http\Controllers\Api\BookingController::class, 'confirm']);
+Route::get('bookings/confirm/{booking_token}/', [\App\Http\Controllers\Api\BookingController::class, 'confirmed']);
+Route::put('bookings/{booking_token}/updateCurrency', [\App\Http\Controllers\Api\BookingController::class, 'updateCurrency']);
+Route::put('bookings/{booking_token}/updateReturnTrip', [\App\Http\Controllers\Api\BookingController::class, 'updateReturnTrip']);
 
 

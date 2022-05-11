@@ -71,10 +71,13 @@ export default {
 
 		async setTransfer(car_id) {
 			const currency = this.$route.query.currency;
-			await this.$store.dispatch('transfer/setBooking', {transfer_id: this.transferId, car_id, currency})
+			const transfer_data = await this.$store.getters['transfer/transfer_data'];
+
+			await this.$store.dispatch('transfer/setBooking', {transfer_id: this.transferId, car_id, currency, return_trip: transfer_data.return_trip})
 			const token = await this.$store.getters['transfer/bookingToken']
+
 			await this.$router.push({
-				path: '/checkout',
+				path: this.$i18n.locale === 'tr' ? '/checkout' : '/' + this.$i18n.locale + '/checkout',
 				query: {booking_token: token, car_id, transfer_id: this.transferId, currency}
 			});
 		}

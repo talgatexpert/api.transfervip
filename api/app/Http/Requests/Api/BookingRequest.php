@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Booking;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BookingRequest extends FormRequest
@@ -38,4 +39,6 @@ class BookingRequest extends FormRequest
             'passengers_number' => 'required'
         ];
     }
+
+
 }

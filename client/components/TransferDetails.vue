@@ -57,7 +57,7 @@
 							</div>
 							<div class="col-lg-4 col-4">
 								<div class="custom-checkbox default-checkbox">
-									<input type="checkbox" v-model="form.return_trip" id="return"
+									<input type="checkbox" @change="updateReturnTrip" v-model="form.return_trip" id="return"
 									       class="custom-checkbox__input color-grey">
 									<label for="return" class="color-grey invert"></label>
 								</div>
@@ -259,8 +259,9 @@ export default {
 
 		this.$nuxt.$on('update-currency', async (currencyCode) => {
 			this.loading = true;
-			await this.updateData({...this.form, currency: currencyCode})
-			this.form = await this.getFormInfo();
+			await this.updateData({...this.form, currency: currencyCode, updateCurrency: true})
+			console.log(currencyCode)
+			// this.form = await this.getFormInfo();
 			this.loading = false;
 
 		})
@@ -270,7 +271,10 @@ export default {
 	methods: {
 
 		async getFormInfo() {
-			await this.$store.dispatch('transfer/getBooking', {booking_token: this.$route.query.booking_token, currency: this.$route.query.currency});
+			await this.$store.dispatch('transfer/getBooking', {
+				booking_token: this.$route.query.booking_token,
+				currency: this.$route.query.currency
+			});
 			const data = await this.$store.getters['transfer/booking'];
 			const city_data = {
 				city_from: '',
@@ -306,18 +310,19 @@ export default {
 		continue_payment() {
 
 		},
-		updateData(payload) {
+		async updateData(payload) {
 
 
 			payload = {
 				...payload,
 				booking_token: this.$route.query.booking_token,
-				currency: this.$route.query.currency,
+				currency: payload.updateCurrency === true ? payload.currency : this.$route.query.currency,
 				started_at: moment(payload.started_at).format('DD.MM.YYYY'),
 				return_booking: {
 					...payload.return_booking,
 					started_at: moment(payload.return_booking.started_at).format('DD.MM.YYYY'),
 				}
+
 
 			}
 
@@ -334,7 +339,7 @@ export default {
 				if (data.passengers_number >= this.max_passengers) {
 					this.disabled_increment = true;
 				}
-				 this.$emit('update-details', {
+				this.$emit('update-details', {
 					...payload,
 					total: data.total,
 					total_with_currency: data.total_with_currency,
@@ -343,10 +348,14 @@ export default {
 					return_price: data.return_price,
 					return_price_with_currency: data.return_price_with_currency,
 				})
+				this.$emit('details-error', JSON.parse(JSON.stringify(this.errors)))
 			}, 500)
 
 		},
 
+		async updateReturnTrip() {
+			await this.updateData({...this.form, updateReturnTrip: true})
+		},
 
 		decrement(event) {
 

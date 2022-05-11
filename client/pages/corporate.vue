@@ -78,7 +78,7 @@
       <button class="btn btn-green" v-b-modal.business-corp>Sign Up</button>
     </div>
 
-    <modal :classes-modal="['modal', 'modal-form']" :title="$t('menu.corporate')" id="business-corp" :inputs="inputs" :show-modal="true"></modal>
+    <modal :classes-modal="['modal', 'modal-form']" :action="signUp" :title="$t('menu.corporate')" id="business-corp" :inputs="inputs" :show-modal="true"></modal>
   </section>
 
 </template>
@@ -100,22 +100,32 @@ export default {
           id: "name",
           translatedName: 'Name',
           type: "text",
+	        value: '',
         },
         {
           name: "company_name",
           id: "company_name",
           translatedName: 'Company name',
           type: "text",
+	        value: '',
+
         },
         {
           name: "Phone",
           id: "Phone",
           translatedName: 'Phone',
           type: "text",
+	        value: '',
+
         },
       ]
     }
-  }
+  },
+	methods: {
+		signUp(inputs, modal, event){
+			console.log(inputs)
+		}
+	},
 
 }
 </script>

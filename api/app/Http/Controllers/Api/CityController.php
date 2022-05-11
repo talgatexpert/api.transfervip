@@ -22,19 +22,19 @@ class CityController extends Controller
 
             $cities = match ($orderBy) {
                 "russian" => City::where(function ($query) use ($exceptCity) {
-                        if ($exceptCity) {
-                            return $query->where('translations->russian', '!=', $exceptCity);
-                        }
-                        return $query;
-                    })
+                    if ($exceptCity) {
+                        return $query->where('translations->russian', '!=', $exceptCity);
+                    }
+                    return $query;
+                })
                     ->where('translations->russian', 'like', '%' . $search . '%')
                     ->orderBy('translations->russian', $sort)->limit($limit)->get(),
                 "english" => City::where(function ($query) use ($exceptCity) {
-                        if ($exceptCity) {
-                            return $query->where('translations->english', '!=', $exceptCity);
-                        }
-                        return $query;
-                    })->where('translations->english', 'like', '%' . $search . '%')
+                    if ($exceptCity) {
+                        return $query->where('translations->english', '!=', $exceptCity);
+                    }
+                    return $query;
+                })->where('translations->english', 'like', '%' . $search . '%')
                     ->orderBy('translations->english', $sort)->limit($limit)->get(),
                 default => City::
                 where(function ($query) use ($exceptCity) {
@@ -53,6 +53,35 @@ class CityController extends Controller
             return new NotFoundResource(['message' => 'City not found']);
         }
         return new NotFoundResource(['message' => 'City not found']);
+
+    }
+
+    public function show($cityName, Request $request)
+    {
+        try {
+            $city = City::where('translations->' . $request->language, $cityName)->first();
+            if ($city) {
+                $translations = $city->getTranslations();
+                return response([
+                    'success' => true,
+                    'data' => [
+                        'id' => $city->id,
+                        'name' => $translations['translations'][$request->language ?? 'turkish'] ?? null,
+                        'slug' => $city->slug,
+                    ]
+                ]);
+            } else {
+                return response([
+                    'success' => false,
+                    'data' => []
+                ]);
+            }
+        } catch (\Exception $exception) {
+            return response([
+                'success' => false,
+                'data' => []
+            ]);
+        }
 
     }
 }

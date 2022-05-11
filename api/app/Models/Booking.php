@@ -30,7 +30,8 @@ class Booking extends Model
     ];
     protected $casts = [
 
-        'return_trip' => 'boolean'
+        'return_trip' => 'boolean',
+        'client_confirmed' => 'boolean',
 
     ];
 
@@ -66,6 +67,18 @@ class Booking extends Model
         $this->save();
     }
 
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+        $this->save();
+    }
+
+    public function setReturnTrip($return_trip)
+    {
+        $this->return_trip = $return_trip;
+        $this->save();
+    }
+
     public function setClientConfirmed()
     {
         $this->client_confirmed = self::ACCEPTED;
@@ -81,9 +94,20 @@ class Booking extends Model
         $this->payment_confirmed = self::ACCEPTED;
     }
 
+    public function setClientConfirm($type)
+    {
+        $this->payment_confirmed = self::ACCEPTED;
+        $this->pre_paid = false;
+        $this->pay_type = $type;
+        $this->client_confirmed =  self::ACCEPTED;
+        $this->step = 'finish';
+        $this->save();
+
+    }
+
     public function setStartedDate($date, $time)
     {
-        if (is_array($time)){
+        if (is_array($time)) {
             $time = $time['HH'] . ":" . $time['mm'];
         }
         $date = trim(preg_replace('/[^0-9\s+:.]/', '', $date));

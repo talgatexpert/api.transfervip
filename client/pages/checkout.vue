@@ -49,18 +49,24 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-8 col-md-12">
+					<div class="col-12" v-if="loading_confirm">
+						<scale-loader :loading="loading_confirm"></scale-loader>
+					</div>
+					<div v-if="!loading_confirm" class="col-lg-8 col-md-12">
 						<transfer-details :edit="edit"
 						                  :change="changeDetail"
 						                  :errors="errors"
 						                  :step="target_step"
 						                  @update-details="updateDetails"
+						                  @details-error="getErrors"
 						                  :changed="changed"></transfer-details>
 						<payment @select-payment="selectPayment" :step="target_step" v-if="show_payment"></payment>
 
-						<button class="btn btn-green w-100 mt-3" @click="continue_payment">Continue</button>
+						<button class="btn btn-green w-100 mt-3" :class="errors ? 'btn-secondary' : '' " :disabled="errors === true"
+						        @click="continue_payment">Continue
+						</button>
 					</div>
-					<div class="col-lg-4 col-md-12">
+					<div v-if="!loading_confirm" class="col-lg-4 col-md-12">
 						<div class="form-total-end">
 							<div class="form form-container">
 								<div class="form-result-title__box">
@@ -115,6 +121,7 @@ import Payment from "../components/Payment";
 import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
 import login from "./login";
+import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
 
 if (!Vue.moment) {
 	Vue.use(VueMoment, {
@@ -125,20 +132,22 @@ if (!Vue.moment) {
 export default Vue.extend({
 
 	name: "checkout",
-	components: {Payment, TransferDetails, ReturnAmount},
+	components: {Payment, TransferDetails, ReturnAmount, ScaleLoader},
 	data() {
 		return {
 			edit: true,
 			changed: false,
 			return_amount: '',
+			loading_confirm: false,
 			component: '',
 			show_payment: false,
+			paymentMethod: '',
 			step_1: true,
 			step_2: false,
 			step_3: false,
 			finish: false,
 			target_step: 'step_1',
-			errors: {},
+			errors: false,
 			form: {
 				passengers_number: 1,
 			},
@@ -169,6 +178,7 @@ export default Vue.extend({
 		};
 		let form = JSON.parse(JSON.stringify(data));
 		form = Object.assign(form, getCityTranslation(data))
+
 		return {form, transferDetail: data, target_step: data.step ?? 'step_1'}
 	},
 	async mounted() {
@@ -183,8 +193,8 @@ export default Vue.extend({
 	},
 	methods: {
 
-		showStep(){
-			switch (this.form.step){
+		showStep() {
+			switch (this.form.step) {
 				case 'step_2':
 					this.edit = false;
 					this.changed = true;
@@ -213,8 +223,19 @@ export default Vue.extend({
 				}
 			}
 		},
+		getErrors(errors) {
+			let count = Object.keys(errors).length;
+			this.errors = count !== 0;
 
-		continue_payment() {
+		},
+
+		async continue_payment() {
+			if (this.errors) {
+				return;
+			}
+			console.log(this.errors)
+
+
 			this.edit = false;
 			this.changed = true;
 			this.show_payment = true;
@@ -225,14 +246,27 @@ export default Vue.extend({
 			this.target_step = 'step_2'
 
 			if (this.finish) {
-				this.$router.push('/success');
+				this.loading_confirm = true;
+
+				await this.$store.dispatch('transfer/confirmBooking', {...this.form, payment_method: this.paymentMethod})
+				this.loading_confirm = false
+				await this.$router.push({
+					path: this.$i18n.locale === 'tr' ? '/success' : '/' + this.$i18n.locale + '/success',
+					query: {
+						booking_token: this.$route.query.booking_token,
+						car_id: this.$route.query.car_id,
+						transfer_id: this.$route.query.transfer_id,
+					}
+				});
 			}
 		},
 		selectPayment(payload) {
 			this.target_step = 'step_3'
 			this.step_3 = true;
 			this.finish = true;
-			console.log(payload)
+			if (payload.method) {
+				this.paymentMethod = payload.method
+			}
 		},
 		changeDetail() {
 			this.edit = true;

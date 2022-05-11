@@ -27,6 +27,10 @@ module.exports = {
     return_back: "Add return",
     search: "Search",
     search_transfer: "Классы трансферов из {from} в {to}",
+    not_found_transfers: 'Unfortunately, nothing has been found in this direction',
+    404: 'Page not found',
+    home_page: 'Home page',
+
 
 
     home: {
@@ -79,6 +83,7 @@ module.exports = {
             step_2: 'Payment',
             step_3: 'Confirmation',
         },
+
         paymentMethods: {
             title: 'Payment methods',
             card: {
@@ -101,6 +106,30 @@ module.exports = {
             by_card: 'By card on the website',
             by_cash: 'Cash to the driver'
         },
+        passengers: {
+            title: 'Passengers',
+            number: 'Indicate the number of passengers',
+            sub_number: 'Including children and infants',
+            child_seat: 'Add child seats',
+            sub_child_seat: 'This is required if children are traveling with you.',
+        },
+        passengers_details: {
+            title: 'Passenger\'s details',
+            name_surname: 'Name and surname *',
+            email: 'E-mail *',
+            sub_email: 'We will send a booking confirmation, voucher, and reminder to this email address.',
+            phone: 'Phone number with country code *',
+            sub_phone: 'We need it for urgent communication with you. It must be available on the day of transfer.',
+            privacy: 'By entering your contact.blade.php information, you agree to our Privacy Policy.',
+        },
+        errors: {
+            address: 'Enter the address or hotel name.',
+            flight_number: 'Enter the flight number',
+            name: 'Enter your first and last name.',
+            email: 'Enter your email.',
+            phone: 'Enter phone number.',
+        },
+
         transfer_details: {
             title: 'Transfer details',
             change: 'Change',
@@ -122,17 +151,34 @@ module.exports = {
                 sub_email: 'We will send a booking confirmation, voucher, and reminder to this email address.',
                 phone: 'Phone number with country code *',
                 sub_phone: 'We need it for urgent communication with you. It must be available on the day of transfer.',
-                privacy: 'By entering your contact information, you agree to our Privacy Policy.',
+                privacy: 'By entering your contact.blade.php information, you agree to our Privacy Policy.',
             },
-            errors: {
-                address: 'Enter the address or hotel name.',
-                flight_number: 'Enter the flight number',
-                name: 'Enter your first and last name.',
-                email: 'Enter your email.',
-                phone: 'Enter phone number.',
-            }
 
         }
 
     },
+
+    success: {
+        title: 'Successfully Reserve Finished',
+        name_surname: 'Name Surname:',
+        address: 'Address:',
+        flight_number: 'Flight Number:',
+        phone: 'Phone:',
+        passengers: 'Passengers:',
+        email: 'Email:',
+        child_seat: 'Child Seat:',
+        payment_method: 'Payment Method:',
+        cash: 'Cash',
+        card: 'Card on the website',
+        return_trip: 'Return trip:',
+        price: 'Price:',
+        return_trip_date: 'Return trip date:',
+        return_trip_time: 'Return trip time:',
+        return_trip_address: 'Return trip address:',
+        return_trip_price: 'Return trip price:',
+        total: 'Total:',
+        print: 'Print',
+        yes: 'Yes',
+        no: 'No',
+    }
 }

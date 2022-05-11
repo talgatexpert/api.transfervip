@@ -1,38 +1,42 @@
 <?php
 
-namespace App\Http\Resources\Api;
+namespace App\Mail;
 
-use App\Services\CurrencyConverterService;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\DB;
+use App\Models\Booking;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
 
-class BookingResource extends JsonResource
+class BookingNotificartioToAdmin extends Mailable
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
-    public function toArray($request)
-    {
-        $booking = $this->resource;
+    use Queueable, SerializesModels;
 
+    public Booking $booking;
+
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct(Booking $booking)
+    {
+        $this->booking = $booking;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        $booking = $this->booking;
         $city_start = $booking->transfer->startCity->getTranslations();
         $city_end = $booking->transfer->endCity->getTranslations();
-        $price = DB::table('transfer_cars')->select('price')->where('transfer_id', $booking->transfer->id)->where('car_id', $booking->car_id)->first();
-        $converterService = new  CurrencyConverterService();
-
-        $currency = $booking->currency;
-        $tax = $booking->company?->tax;
-        $rates = $converterService->convert($price->price, $currency);
-
-        $withTax = ceil((ceil($rates) / 100 * $tax) + $rates);
-        $ifCurrencyRateNotWorking = ceil((ceil($price->price) / 100 * $tax) + $price->price);
-        $price = $rates !== false ? $withTax : $ifCurrencyRateNotWorking;
-
         $returnBooking = $booking->returnBooking;
         $data = [
+            'id' => $booking->id,
             'city_from' => $city_start['translations'],
             'city_end' => $city_end['translations'],
             'car' => [
@@ -42,10 +46,10 @@ class BookingResource extends JsonResource
                 'type' => $booking->car->type,
                 'person_quantity' => $booking->car->person_quantity,
             ],
-            'price' => $price,
-            'price_with_currency' => $price . ' ' . $booking->currency,
-            'return_price' => $price,
-            'return_price_with_currency' => $price . ' ' . $booking->currency,
+            'price' => $booking->amount,
+            'price_with_currency' => $booking->amount . ' ' . $booking->currency,
+            'return_price' => $booking->return_amount,
+            'return_price_with_currency' => $booking->return_amount . ' ' . $booking->currency,
             'name' => $booking->name,
             'address' => $booking->address,
             'step' => $booking->step,
@@ -66,8 +70,8 @@ class BookingResource extends JsonResource
                 'address' => $returnBooking?->address,
 
             ],
-            'total' => $booking->return_trip != false ? $price + $price : $price,
-            'total_with_currency' => $booking->return_trip != false ? $price + $price . ' ' . $booking->currency : $price . ' ' . $booking->currency,
+            'total' => $booking->return_trip != false ? $booking->amount + $booking->return_amount : $booking->amount,
+            'total_with_currency' => $booking->return_trip != false ? $booking->amount + $booking->return_amount . ' ' . $booking->currency : $booking->amount . ' ' . $booking->currency,
 
         ];
         if ($booking->client_confirmed === true) {
@@ -78,8 +82,6 @@ class BookingResource extends JsonResource
                     'booking_accepted' => $booking->booking_accepted,
                 ];
         }
-
-        return $data;
-
+        return $this->view('booking_admin', $data);
     }
 }

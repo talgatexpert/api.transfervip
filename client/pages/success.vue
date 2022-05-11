@@ -1,73 +1,121 @@
 <template>
-  <section class="checkout">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <div class="content-info">
-            <div class="form form-container">
-              <div class="padding-form">
-                <h4 class="form-title text-center">Successfully Reserve Finished</h4>
-              </div>
-              <div class="row m-0">
-                <div class="success-data offset-lg-2 col-lg-8 col-md-12">
-                  <div class="success-data__row">
-                    <div class="data-name">Name Surname:</div>
-                    <div class="data-value">Mehemet CanOglu</div>
-                  </div>
-                  <div class="success-data__row">
-                    <div class="data-name">Hotel:</div>
-                    <div class="data-value">SunRays</div>
-                  </div>
-                  <div class="success-data__row">
-                    <div class="data-name">Flight Number:</div>
-                    <div class="data-value">JHD5155</div>
-                  </div>
-                  <div class="success-data__row">
-                    <div class="data-name">Email:</div>
-                    <div class="data-value">mehmet@mail.com</div>
-                  </div>
-                  <div class="success-data__row">
-                    <div class="data-name">Phone:</div>
-                    <div class="data-value">+90 555 555 55 55</div>
-                  </div>
-                  <div class="success-data__row">
-                    <div class="data-name">Passengers:</div>
-                    <div class="data-value">2</div>
-                  </div>
-                  <div class="success-data__row">
-                    <div class="data-name">Child Seat:</div>
-                    <div class="data-value">Yes</div>
-                  </div>
-                  <div class="success-data__row">
-                    <div class="data-name">Payment Method:</div>
-                    <div class="data-value">With card on website</div>
-                  </div>
-                  <div class="success-data__row">
-                    <div class="data-name">Return trip:</div>
-                    <div class="data-value">No</div>
-                  </div>
-                </div>
+	<section class="checkout">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<div class="content-info">
+						<div class="form form-container">
+							<div class="padding-form">
+								<h4 class="form-title text-center">{{ $t('success.title') }}</h4>
+							</div>
+							<div class="row m-0">
+								<div class="success-data offset-lg-2 col-lg-8 col-md-12">
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.name_surname') }}</div>
+										<div class="data-value">{{ form.name }}</div>
+									</div>
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.address') }}</div>
+										<div class="data-value">{{ form.address }}</div>
+									</div>
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.flight_number') }}</div>
+										<div class="data-value">{{ form.flight_number }}</div>
+									</div>
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.email') }}</div>
+										<div class="data-value">{{ form.email }}</div>
+									</div>
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.phone') }}</div>
+										<div class="data-value">{{ form.phone }}</div>
+									</div>
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.passengers') }}</div>
+										<div class="data-value">{{ form.passengers_number }}</div>
+									</div>
+									<div class="success-data__row" v-if="form.add_child_seat === 1">
+										<div class="data-name">{{ $t('success.child_seat') }}</div>
+										<div class="data-value">{{ $t('success.yes') }}</div>
+									</div>
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.payment_method') }}</div>
+										<div class="data-value" v-if="'cash' === form.pay_type">{{ $t('success.cash') }}</div>
+										<div class="data-value" v-else>{{ $t('success.card') }}</div>
+									</div>
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.return_trip') }}</div>
+										<div class="data-value" v-if="form.return_trip">{{ $t('success.yes') }}</div>
+										<div class="data-value" v-else>{{ $t('success.no') }}</div>
+									</div>
+									<div class="success-data__row">
+										<div class="data-name">{{ $t('success.price') }}</div>
+										<div class="data-value">{{ form.price_with_currency }}</div>
+									</div>
 
-                <div class="col-lg-8 offset-lg-2 col-md-12">
-                  <button class="btn btn-green noprint" @click="print">Print</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+
+									<div v-if="form.return_trip">
+										<div class="success-data__row">
+											<div class="data-name">{{ $t('success.return_trip_date') }}</div>
+											<div class="data-value">{{ form.return_booking.started_at }}</div>
+										</div>
+										<div class="success-data__row">
+											<div class="data-name">{{ $t('success.return_trip_time') }}</div>
+											<div class="data-value">{{ form.return_booking.started_at_time }}</div>
+										</div>
+
+										<div class="success-data__row">
+											<div class="data-name">{{ $t('success.return_trip_address') }}</div>
+											<div class="data-value">{{ form.return_booking.address }}</div>
+										</div>
+										<div class="success-data__row">
+											<div class="data-name">{{ $t('success.price') }}</div>
+											<div class="data-value">{{ form.return_price_with_currency }}</div>
+										</div>
+
+									</div>
+									<div class="success-data__row ">
+										<div class="data-name font-weight-bold">{{ $t('success.total') }}</div>
+										<div class="data-value font-weight-bold">{{ form.total_with_currency }}</div>
+									</div>
+								</div>
+
+								<div class="col-lg-8 offset-lg-2 col-md-12">
+									<button class="btn btn-green noprint" @click="print">{{ $t('success.print') }}</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 </template>
 
 <script>
 export default {
-  name: "success.vue",
-  methods: {
-    print () {
-      window.print();
-    },
-  }
+	name: "success.vue",
+	data() {
+		return {
+			form: {},
+		}
+	},
+	methods: {
+		print() {
+			window.print();
+		},
+	},
+	async asyncData({app, query}) {
+		await app.store.dispatch('transfer/getConfirmBooking', {booking_token: query.booking_token,});
+		const form = await app.store.getters['transfer/confirmBooking']
+
+		return {form}
+	},
+	mounted() {
+		window.addEventListener('popstate', function (event) {
+			history.pushState(null, document.title, location.href);
+		});
+	}
 }
 </script>
 

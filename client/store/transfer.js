@@ -5,11 +5,19 @@ export const state = () => ({
     booking: '',
     errors: [],
     form: {},
+    transfer_data: {},
+    confirmBooking: {}
 })
 
 export const mutations = {
     SET_TRANSFERS(state, payload) {
         state.transfers = payload;
+    },
+    SET_CONFIRM_BOOKING(state, payload) {
+        state.confirmBooking = payload;
+    },
+    SET_TRANSFER_DATA(state, payload) {
+        state.transfer_data = payload;
     },
     SET_TOKEN(state, payload) {
         state.booking_token = payload
@@ -29,10 +37,12 @@ export const mutations = {
 }
 export const actions = {
     async get({commit}, payload) {
-        console.log(`/transfers/${payload.city_from}/${payload.city_to}`)
         let url = `/transfers/${payload.city_from}/${payload.city_to}`;
         if (payload.currency) {
             url += '?currency=' + payload.currency
+        }
+        if (payload.return_trip && payload.currency) {
+            url += '&return_trip=true'
         }
         await this.$axios.$get(url).then(({data}) => {
 
@@ -53,12 +63,25 @@ export const actions = {
         })
     },
     async saveBooking({commit}, payload) {
-        await this.$axios.put('bookings/' + payload.booking_token, payload).then(({data}) => {
-            commit('SET_BOOKING', data.data)
-            commit('SET_ERROR', [])
-        }).catch(error => {
-            commit('SET_ERROR', error.response.data.errors)
-        })
+        console.log(payload)
+        if (payload?.updateCurrency)
+            await this.$axios.put('bookings/' + payload.booking_token + '/updateCurrency', payload).then(({data}) => {
+                commit('SET_BOOKING', data.data)
+            }).catch(error => {
+                commit('SET_ERROR', error.response.data.errors)
+            })
+
+        else {
+            await this.$axios.put('bookings/' + payload.booking_token + '/updateReturnTrip', payload).then(({data}) => {
+                commit('SET_BOOKING', data.data)
+            })
+            await this.$axios.put('bookings/' + payload.booking_token, payload).then(({data}) => {
+                commit('SET_BOOKING', data.data)
+                commit('SET_ERROR', [])
+            }).catch(error => {
+                commit('SET_ERROR', error.response.data.errors)
+            })
+        }
     },
     async getBooking({commit}, payload) {
         await this.$axios.get('bookings/' + payload.booking_token, payload).then(({data}) => {
@@ -68,11 +91,28 @@ export const actions = {
     async setBookingForm({commit}, payload) {
         commit('SET_FORM', payload);
     },
+    setTransferData({commit}, payload) {
+        commit('SET_TRANSFER_DATA', payload)
+    },
+   async confirmBooking({commit}, payload){
+        await this.$axios.put('bookings/' + payload.booking_token + '/confirm', payload).then(({data}) => {
+            commit('SET_CONFIRM_BOOKING', data.data)
+        }).catch(error => {
+            commit('SET_ERROR', error.response.data.errors)
+        })
+    },
+    async getConfirmBooking({commit}, payload) {
+        await this.$axios.get('bookings/confirm/' + payload.booking_token, payload).then(({data}) => {
+            commit('SET_CONFIRM_BOOKING', data.data)
+        })
+    },
 }
 export const getters = {
     transfers: (state) => state.transfers,
     bookingToken: (state) => state.booking_token,
     booking: async (state) => state.booking,
     errors: (state) => state.errors,
+    confirmBooking: (state) => state.confirmBooking,
     form: (state) => state.form,
+    transfer_data: (state) => state.transfer_data,
 }

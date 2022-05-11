@@ -27,6 +27,8 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('flight_number')->nullable();
             $table->decimal('amount')->nullable();
+            $table->decimal('return_amount')->nullable();
+            $table->decimal('total')->nullable();
             $table->string('step')->nullable();
             $table->tinyInteger('return_trip')->nullable();
             $table->integer('passengers_number')->default(1);

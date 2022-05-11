@@ -81,6 +81,7 @@ export default {
 
 
       items.push({path: '/panel/account', title: 'My Account', icon: 'mdi-account'})
+      items.push({path: '/panel/bookings', title: 'Bookings', icon: 'mdi-bus'})
 
       if (role === 'client') {
         items.push({path: '/panel/trips', title: 'Trips', icon: 'mdi-arrow-bottom-right'})
