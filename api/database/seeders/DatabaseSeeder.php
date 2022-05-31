@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class DatabaseSeeder extends Seeder
 
     public array $localSeeders = [
         SettingSeeder::class,
+        RoleSeeder::class,
         UserSeeder::class,
         CompanySeeder::class,
         CitySeeder::class,
@@ -26,8 +28,10 @@ class DatabaseSeeder extends Seeder
     ];
     public array $productionSeeders = [
         SettingSeeder::class,
+        RoleSeeder::class,
         UserSeeder::class,
         CitySeeder::class,
+
 
 
     ];

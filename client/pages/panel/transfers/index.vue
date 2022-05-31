@@ -1,6 +1,7 @@
 <template>
   <div>
     <header-admin update="" :breadcrumbs-list="breadcrumbsList" :pageTitle="pageTitle"></header-admin>
+	  <v-skeleton-loader class="main-box-container mt-7" :loading="loading" type="table">
 
     <v-data-table
       :headers="headers"
@@ -8,11 +9,12 @@
       :server-items-length="totalNumberOfItems"
       @update:options="paginate"
       sort-by="id"
-      class="elevation-1"
+      class="main-box-container"
     >
-      <template v-slot:top>
-        <v-toolbar
-          flat
+	    <template v-slot:top>
+		    <v-toolbar
+				    flat
+				    class="main-box-container mt-6"
         >
           <v-row class="mt-3">
             <v-col cols="12" lg="4" md="8" sm="12">
@@ -84,6 +86,7 @@
       </template>
 
     </v-data-table>
+	  </v-skeleton-loader>
   </div>
 </template>
 
@@ -96,10 +99,11 @@ export default {
   layout: "admin",
   data() {
     return {
+			loading: true,
       breadcrumbsList: [
         {
-          text: 'Dashboard',
-          disabled: false,
+          text: 'Kontrol paneli',
+          disabled: true,
           href: '/panel/dashboard',
         },
         {
@@ -199,12 +203,11 @@ export default {
   created() {
   },
 
-  async asyncData({app}) {
-    await app.store.dispatch('panel/transfer/GET_TRANSFERS', '?page=1&limit=10&orderby=id');
-    const transfers = await app.store.getters['panel/transfer/GET_TRANSFERS']
-    let totalNumberOfItems = await app.store.getters['panel/transfer/GET_TOTAL']
-
-    return {transfers, totalNumberOfItems}
+  async mounted() {
+    await this.$store.dispatch('panel/transfer/GET_TRANSFERS', '?page=1&limit=10&orderby=id');
+	  this.transfers = await this.$store.getters['panel/transfer/GET_TRANSFERS']
+	  this.totalNumberOfItems = await this.$store.getters['panel/transfer/GET_TOTAL']
+		this.loading = false;
   },
 
   async beforeRouteUpdate(to, from, next) {

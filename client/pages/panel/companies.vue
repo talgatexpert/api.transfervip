@@ -1,6 +1,7 @@
 <template>
   <div>
-    <header-admin update="" :breadcrumbs-list="breadcrumbsList" :pageTitle="pageTitle"></header-admin>
+    <header-admin update="" :breadcrumbs-list="breadcrumbs" :pageTitle="pageTitle"></header-admin>
+	  <v-skeleton-loader class="main-box-container mt-7" :loading="loading" type="table">
 
     <v-data-table
       :headers="headers"
@@ -8,11 +9,12 @@
       :server-items-length="totalNumberOfItems"
       @update:options="paginate"
       sort-by="id"
-      class="elevation-1"
+      class="main-box-container"
     >
-      <template v-slot:top>
-        <v-toolbar
-          flat
+	    <template v-slot:top>
+		    <v-toolbar
+				    flat
+				    class="main-box-container mt-6"
         >
           <v-toolbar-title>Şirketler listesi</v-toolbar-title>
           <v-divider
@@ -171,6 +173,7 @@
       </template>
 
     </v-data-table>
+	  </v-skeleton-loader>
   </div>
 </template>
 
@@ -183,9 +186,10 @@ export default {
   layout: "admin",
   data() {
     return {
-      breadcrumbsList: [
+			loading: true,
+      breadcrumbs: [
         {
-          text: 'Dashboard',
+          text: 'Kontrol paneli',
           disabled: false,
           href: '/panel',
         },
@@ -273,12 +277,11 @@ export default {
   created() {
   },
 
-  async asyncData({app}) {
-    await app.store.dispatch('panel/company/GET_COMPANY', '?page=1&limit=10');
-    const companies = await app.store.getters['panel/company/GET_COMPANY']
-    let totalNumberOfItems = await app.store.getters['panel/company/GET_TOTAL']
-
-    return {companies, totalNumberOfItems}
+  async mounted() {
+    await this.$store.dispatch('panel/company/GET_COMPANY', '?page=1&limit=10');
+	  this.companies = await this.$store.getters['panel/company/GET_COMPANY']
+	  this.totalNumberOfItems = await this.$store.getters['panel/company/GET_TOTAL']
+		this.loading = false;
   },
 
   async beforeRouteUpdate(to, from, next) {

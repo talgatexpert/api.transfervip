@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Closure;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,18 +21,15 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        $role = Role::inRandomOrder()->first();
+
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => bcrypt(123), // password
             'remember_token' => Str::random(10),
-            'role_id' => Arr::random([
-                User::ROLES['admin'],
-                User::ROLES['travel'],
-                User::ROLES['client'],
-                User::ROLES['company'],
-            ]),
+            'role_id' => $role->id,
 
         ];
     }

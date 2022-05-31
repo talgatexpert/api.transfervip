@@ -16,7 +16,7 @@ class BookingController extends Controller
     {
         $booking = Booking::create($request->only('transfer_id', 'car_id', 'currency', 'return_trip'));
 
-        $booking->company_id = $booking->transfer?->company->id;
+        $booking->company_id = $booking->transfer?->company?->id ?? 0;
         $booking->save();
 
         $booking->setBookingToken();

@@ -1,7 +1,10 @@
 export const USERS_URL = 'panel/users/';
+export const UPDATE_CURRENT_USER = 'panel/user/';
 export const USERS_INACTIVE_URL = 'panel/users/inactive/';
 export const ROLES_URL = 'panel/user/roles/';
 export const CARS_URL = 'panel/cars/';
 export const CITIES_URL = 'panel/city/';
 export const COMPANY_URL = 'panel/company/';
 export const TRANSFERS_URL = 'panel/transfers/';
+export const BOOKINGS_URL = 'panel/bookings/';
+export const BOOKINGS_DETAIL_URL = 'panel/bookings-details/';

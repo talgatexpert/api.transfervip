@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <sidebar/>
-    <v-main >
+    <v-main style="background: #F4F4F8" >
       <Nuxt></Nuxt>
     </v-main>
   </v-app>

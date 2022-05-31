@@ -1,33 +1,96 @@
 <template>
-  <div class="indigo mb-5" >
-    <v-container>
+	<div class="main-box-container mt-6">
+		<v-container>
+			<v-row>
+				<v-col cols="12" md="8" sm="8">
+					<breadcrumbs color-white="color-white" :items="breadcrumbsList" class="pl-0 "></breadcrumbs>
+				</v-col>
+				<v-col cols="12" md="4" sm="4" class="d-flex align-items-center justify-content-end">
+					<v-badge
+							bordered
+							color="error"
+							:content="bookings"
+							overlap
+							:value="show"
+					>
+						<v-btn-toggle>
+							<v-icon>
+								mdi-bell
+							</v-icon>
+						</v-btn-toggle>
+					</v-badge>
+					<v-chip
+							class="transparent ml-3 rounded-pill py-6  v-chip--clickable"
+							pill
 
-      <breadcrumbs color-white="color-white" :items="breadcrumbsList" class="pl-0 "></breadcrumbs>
-      <v-row>
-        <v-col cols="12">
-          <div class="d-flex justify-content-between">
-            <h3 class="text-light">{{ pageTitle }}</h3>
-            <v-btn v-if="showUpdate" @click="update">Update settings</v-btn>
-          </div>
-        </v-col>
-      </v-row>
+					>
 
-    </v-container>
+						{{ username }}
+						<v-avatar right>
+							<v-img src="https://cdn.vuetifyjs.com/images/john.png"></v-img>
+						</v-avatar>
+					</v-chip>
+				</v-col>
 
-  </div>
+			</v-row>
+		</v-container>
+
+	</div>
 </template>
 
 <script>
 import Breadcrumbs from "../Breadcrumbs";
+import {BOOKINGS_DETAIL_URL} from "../../routes/panel";
+
 export default {
-  name: "HeaderAdmin",
-  props: {
-    update: Function | String | Boolean,
-    breadcrumbsList: Array,
-    pageTitle: String,
-    showUpdate: Boolean | false
-  },
+	name: "HeaderAdmin",
+	props: {
+		update: Function | String | Boolean,
+		breadcrumbsList: Array,
+		pageTitle: String,
+		showUpdate: Boolean | false,
+		count: Number,
+	},
+
+	data() {
+		return {
+			bookings: '',
+			show: false,
+		}
+	},
 	components: {Breadcrumbs},
+
+	watch: {
+		count(val){
+
+			this.bookings = val
+			if (val === 0){
+				this.show = false
+			}else{
+				this.show = true
+			}
+		}
+	},
+
+
+
+	computed: {
+		username() {
+			return 'Hi ' + this.$auth.user.name
+		},
+
+	},
+	async mounted() {
+
+		await this.$store.dispatch('panel/bookings/GET_NOT_ACCEPTED_BOOKINGS');
+		this.bookings = this.$store.getters['panel/bookings/GET_COUNT']
+		if (this.bookings > 0){
+			this.show = true
+		}else{
+			this.show = false
+		}
+	},
+
 }
 </script>
 

@@ -26,7 +26,7 @@ module.exports = {
     datapicker_to: "City, airport or railway station",
     return_back: "Add return",
     search: "Search",
-    search_transfer: "Классы трансферов из {from} в {to}",
+    search_transfer: "Transfer classes from {from} to {to}",
     not_found_transfers: 'Unfortunately, nothing has been found in this direction',
     404: 'Page not found',
     home_page: 'Home page',

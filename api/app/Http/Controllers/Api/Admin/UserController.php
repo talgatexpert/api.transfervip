@@ -71,12 +71,36 @@ class UserController extends Controller
 
         return response([
             'name' => $user->name,
+            'email' => $user->email,
             'role_id' => (int)$user->role_id,
             'role' => User::ROLE_TEXT[(int)$user->role_id],
             'hidden_role' => $user->getRole(),
             'permissions' => $user->getPermissions()
         ]);
 
+    }
+
+    public function update_user(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'password' => 'required',
+            'confirm_password' => 'same:password',
+        ]);
+        $user = auth()->user();
+        $user->update([
+            'name' => $request->name,
+            'password' => bcrypt($request->password),
+        ]);
+
+        return response([
+            'name' => $user->name,
+            'email' => $user->email,
+            'role_id' => (int)$user->role_id,
+            'role' => User::ROLE_TEXT[(int)$user->role_id],
+            'hidden_role' => $user->getRole(),
+            'permissions' => $user->getPermissions()
+        ]);
     }
 
     /*

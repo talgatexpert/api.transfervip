@@ -24,7 +24,7 @@ module.exports = {
     datapicker_to: "Şehir, havaalanı veya otogar",
     return_back: "İleri geri",
     search: "Ara",
-    search_transfer: "Классы трансферов из %{from} в %{to}",
+    search_transfer: "Transferler {from} - {to}",
     not_found_transfers: 'Maalesef bu yönde hiçbir araç bulunamadı',
     404: 'Sayfa bulunamadı',
     home_page: 'Ana sayfaya dön',

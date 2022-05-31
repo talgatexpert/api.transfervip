@@ -2,7 +2,7 @@
   <v-card>
 
     <v-navigation-drawer
-      class="rounded-0"
+      class="rounded-0 background-sidebar"
       v-model="drawer"
       :mini-variant.sync="mini"
       permanent
@@ -10,7 +10,7 @@
 
       dark
     >
-      <v-list-item class="px-2">
+      <v-list-item class="px-2 mt-3">
         <v-list-item-avatar>
           <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
         </v-list-item-avatar>
@@ -25,10 +25,10 @@
         </v-btn>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider class="mt-0 mb-0"></v-divider>
 
       <v-list dense>
-        <v-list-item v-for="(item,key) in items"   :key="key" :to="item.path">
+        <v-list-item v-for="(item,key) in items" :exact="item.exact"  :key="key" :to="item.path">
           <v-list-item-icon> <v-icon>{{item.icon}}</v-icon> </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>{{item.title}}</v-list-item-title>
@@ -65,7 +65,7 @@ export default {
   data() {
     return {
       drawer: true,
-      logout_data: {path: '/panel/logout', title: 'Logout', icon: 'mdi-logout'},
+      logout_data: {path: '/panel/logout', title: 'Kapatma', icon: 'mdi-logout'},
       mini: false,
     }
   },
@@ -80,31 +80,34 @@ export default {
       let items = [];
 
 
-      items.push({path: '/panel/account', title: 'My Account', icon: 'mdi-account'})
-      items.push({path: '/panel/bookings', title: 'Bookings', icon: 'mdi-bus'})
+      items.push({path: '/panel/', title: 'Kontrol paneli', icon: 'mdi-home', exact: true})
+      items.push({path: '/panel/account', title: 'Hesabım', icon: 'mdi-account'})
+      items.push({path: '/panel/bookings', title: 'Rezervasyonlar', icon: 'mdi-bus'})
 
       if (role === 'client') {
-        items.push({path: '/panel/trips', title: 'Trips', icon: 'mdi-arrow-bottom-right'})
+        items.push({path: '/panel/trips', title: 'Seyahatler', icon: 'mdi-arrow-bottom-right'})
       }
+	    console.log(role)
       if (role === 'super_admin') {
-        items.push({path: '/panel/settings', title: 'Settings', icon: 'mdi-account-settings-outline'})
-        items.push({path: '/panel/cities', title: 'Cities', icon: 'mdi-city'})
-        items.push({path: '/panel/cars', title: 'Cars', icon: 'mdi-car'})
-        items.push({path: '/panel/companies', title: 'Companies', icon: 'mdi-account-multiple'})
-        items.push({path: '/panel/clients', title: 'Clients', icon: 'mdi-account-group-outline'})
-        items.push({path: '/panel/transfers', title: 'Transfers', icon: 'mdi-car-outline'})
-        items.push({path: '/panel/users', title: 'Users', icon: 'mdi-account-outline'})
+        items.push({path: '/panel/cities', title: 'Şehirler', icon: 'mdi-city'})
+        items.push({path: '/panel/cars', title: 'Araçlar', icon: 'mdi-car'})
+        items.push({path: '/panel/companies', title: 'Şirketler', icon: 'mdi-account-multiple'})
+        items.push({path: '/panel/clients', title: 'Müşteriler', icon: 'mdi-account-group-outline'})
+        items.push({path: '/panel/transfers', title: 'Aktarmalar', icon: 'mdi-car-outline'})
+        items.push({path: '/panel/users', title: 'Kullanıcı', icon: 'mdi-account-outline'})
+	      items.push({path: '/panel/settings', title: 'Sistem Ayarları', icon: 'mdi-account-settings-outline'})
+
       }
       if (role === 'admin') {
-        items.push({path: '/panel/cities', title: 'Cities', icon: 'mdi-city'})
-        items.push({path: '/panel/clients', title: 'Clients', icon: 'mdi-account-group-outline'})
-        items.push({path: '/panel/cars', title: 'cars', icon: 'mdi-car'})
-        items.push({path: '/panel/transfers', title: 'Transfers', icon: 'mdi-car-outline'})
+        items.push({path: '/panel/cities', title: 'Şehirler', icon: 'mdi-city'})
+        items.push({path: '/panel/clients', title: 'Müşteriler', icon: 'mdi-account-group-outline'})
+        items.push({path: '/panel/cars', title: 'Araçlar', icon: 'mdi-car'})
+        items.push({path: '/panel/transfers', title: 'Aktarmalar', icon: 'mdi-car-outline'})
       }
       if (role === 'company') {
-        items.push({path: '/panel/cars', title: 'cars', icon: 'mdi-car'})
-        items.push({path: '/panel/transfers', title: 'Transfers', icon: 'mdi-car-outline'})
-        items.push({path: '/panel/clients', title: 'Clients', icon: 'mdi-account-group-outline'})
+        items.push({path: '/panel/cars', title: 'Araçlar', icon: 'mdi-car'})
+        items.push({path: '/panel/transfers', title: 'Aktarmalar', icon: 'mdi-car-outline'})
+        items.push({path: '/panel/clients', title: 'Müşteriler', icon: 'mdi-account-group-outline'})
       }
 
       return items;
@@ -129,5 +132,11 @@ export default {
 </script>
 
 <style scoped>
-
+	.background-sidebar{
+		background: #1e272e;
+	}
+	.v-list-item__title{
+		font-weight: normal !important;
+		font-size: 1rem !important;
+	}
 </style>

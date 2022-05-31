@@ -154,7 +154,8 @@ export default {
         },
         redirect: {
             home: '/panel/',
-        }
+        },
+        plugins: ['@/plugins/auth-lang-redirect.js'],
 
     },
 

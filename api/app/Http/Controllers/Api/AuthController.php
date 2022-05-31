@@ -34,6 +34,7 @@ class AuthController extends Controller
             return response( ['data' =>
                 ['user' => $user,
                 'name' => $user->name,
+                'email' => $user->email,
                 'role_id' => (int)$user->role_id,
                 'role' => User::ROLE_TEXT[(int)$user->role_id],
                 'hidden_role' => $user->getRole(),

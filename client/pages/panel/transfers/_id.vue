@@ -218,7 +218,7 @@ export default {
     return {
       breadcrumbsList: [
         {
-          text: 'Dashboard',
+          text: 'Kontrol paneli',
           disabled: false,
           href: '/panel/',
         },

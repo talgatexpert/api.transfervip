@@ -14,10 +14,10 @@ class User extends Authenticatable
 
     public const ROLES = [
         'super_admin' => 1,
-        'admin'       => 2,
-        'client'      => 3,
-        'company'     => 4,
-        'travel'      => 5,
+        'admin' => 2,
+        'client' => 3,
+        'company' => 4,
+        'travel' => 5,
     ];
     public const ROLES_ID = [
         self::ROLES['super_admin'] => 1,
@@ -203,6 +203,11 @@ class User extends Authenticatable
         'role_id' => 'integer'
     ];
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
 
     public function company()
     {
@@ -211,44 +216,12 @@ class User extends Authenticatable
 
     public function getRole()
     {
-        switch ((int)$this->role_id){
-            case self::ROLES['super_admin']:
-                return 'super_admin';
-                break;
-            case self::ROLES['admin']:
-                return 'admin';
-                break;
-            case self::ROLES['client']:
-                return 'client';
-                break;
-            case self::ROLES['travel']:
-                return 'travel';
-                break;
-            case self::ROLES['company']:
-                return 'company';
-                break;
-        }
+        return $this->role->name;
 
     }
 
     public function getPermissions()
     {
-        switch ((int)$this->role_id){
-            case self::ROLES['super_admin']:
-                return  self::ABILITIES['SUPER_ADMIN'];
-                break;
-            case self::ROLES['admin']:
-                return self::ABILITIES['ADMIN_ABILITIES'];
-                break;
-            case self::ROLES['client']:
-                return self::ABILITIES['CLIENT_ABILITIES'];
-                break;
-            case self::ROLES['travel']:
-                return self::ABILITIES['TRAVEL_ABILITIES'];
-                break;
-            case self::ROLES['company']:
-                return self::ABILITIES['COMPANY_ABILITIES'];
-                break;
-        }
+       return json_decode($this->role->permissions, true);
     }
 }

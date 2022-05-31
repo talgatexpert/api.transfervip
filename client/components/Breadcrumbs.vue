@@ -2,7 +2,7 @@
   <v-breadcrumbs :items="items">
     <template v-slot:item="{ item }">
       <v-breadcrumbs-item
-        :class="colorWhite"
+        class="color-dark text-dark"
         :to="item.href"
         :disabled="item.disabled"
       >
@@ -17,8 +17,8 @@ export default {
   name: "Breadcrumbs",
   props: {
     items: Array,
-    colorWhite: 'color-dark' | String,
-  }
+    // colorWhite: 'color-dark' ,
+  },
 }
 </script>
 

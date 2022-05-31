@@ -25,9 +25,12 @@ Route::group(['middleware' => [ 'auth:sanctum'], 'prefix' => 'panel'], function 
     Route::apiResource('settings', \App\Http\Controllers\Api\Admin\SettingController::class)
         ->middleware('sanctum.abilities:settings-can-get,settings-can-edit,settings-can-add');
     Route::apiResource('company', \App\Http\Controllers\Api\Admin\CompanyController::class);
+    Route::apiResource('bookings', \App\Http\Controllers\Api\Admin\BookingControler::class)->except('delete');
+    Route::get('/bookings-details/count', [\App\Http\Controllers\Api\Admin\BookingControler::class, 'count']);
     Route::apiResource('users', \App\Http\Controllers\Api\Admin\UserController::class);
     Route::post('/users/inactive', [\App\Http\Controllers\Api\Admin\UserController::class, 'getNotBindUsers']);
     Route::get('/user', [\App\Http\Controllers\Api\Admin\UserController::class, 'user']);
+    Route::put('/user', [\App\Http\Controllers\Api\Admin\UserController::class, 'update_user']);
     Route::get('/user/roles', [\App\Http\Controllers\Api\Admin\UserController::class, 'roles']);
     Route::get('/transfers', [\App\Http\Controllers\Api\Admin\TransferController::class, 'index']);
     Route::get('/transfers/{transfer}', [\App\Http\Controllers\Api\Admin\TransferController::class, 'show']);
