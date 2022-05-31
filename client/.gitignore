@@ -90,3 +90,4 @@ sw.*
 *.swp
 
 nuxt.config.js
+ecosystem.config.js
