@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return "Welcome";
+    return "Welcome ";
 });
 
 Route::post('deploy', [\App\Http\Controllers\Deployment\DeployController::class, 'deploy']);
