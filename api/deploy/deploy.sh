@@ -29,4 +29,5 @@ cd /home/lux/lux_elit/client/
 pm2 kill
 npm install nuxt
 npm run build
-pm2 start /home/lux/lux_elit/client/ecosystem.config.js
+pm2 start /home/lux/lux_elit/client/ecosystem.config.js3
+pm2 save
