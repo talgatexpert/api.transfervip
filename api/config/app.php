@@ -15,6 +15,8 @@ return [
     |
     */
 
+    'deploy_secret' => env('APP_DEPLOY_SECRET', 'AUTO_DEPLOY'),
+
     'name' => env('APP_NAME', 'Laravel'),
 
     /*

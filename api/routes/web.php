@@ -15,8 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return "Welcome";
 });
+
+Route::post('deploy', [\App\Http\Controllers\Deployment\DeployController::class, 'deploy']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('login', function () {
     return view('welcome');
