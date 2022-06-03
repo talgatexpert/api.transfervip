@@ -37,11 +37,24 @@ export default Vue.extend({
 
   },
 
+	head() {
+		return {
+			title: this.title,
+			meta: [
+				{
+					hid: 'Lux elit travel Transfer Company in Turkey',
+					name: 'Lux elit travel Transfer Company in Turkey',
+					content: 'Lux elit travel Transfer Company in Turkey'
+				}
+			]
+		}
+	},
+
 
 
   data() {
     return {
-
+			title: 'Lux elit travel Transfer Company in Turkey',
       swiperOptions: {
         slidesPerView: 3,
         spaceBetween: 20,

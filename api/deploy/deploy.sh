@@ -25,6 +25,7 @@ php artisan up
 php artisan optimize
 
 cd /home/lux/lux_elit/client/
+cp /home/lux/nuxt.config.js /home/lux/lux_elit/client/nuxt.config.js
 
 pm2 kill
 npm install
