@@ -22,7 +22,7 @@ class DeployController extends Controller
             $process->run(function ($type, $buffer) {
                 echo $buffer;
             });
-            Log::write(0, 'deployment completed successfully');
+            Log::write('UPDATE', 'deployment completed successfully');
             return 'ok';
 //        }
     }
