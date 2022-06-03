@@ -1,6 +1,6 @@
 #!/bin/sh
 # activate maintenance mode
-cd ~/lux/lux_elit/
+cd /home/lux/lux_elit
 # update source code
 git pull
 
