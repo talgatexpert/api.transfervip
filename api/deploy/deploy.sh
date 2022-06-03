@@ -22,7 +22,7 @@ git pull
 #php artisan up
 #php artisan optimize
 
-cd ../client
+cd /home/lux/lux_elit/client/
 
 pm2 kill
 npm run build
