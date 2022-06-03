@@ -23,6 +23,7 @@ class DeployController extends Controller
                 echo $buffer;
             });
             Log::write(0, 'deployment completed successfully');
+            return 'ok';
 //        }
     }
 }
