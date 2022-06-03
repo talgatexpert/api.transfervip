@@ -19,7 +19,6 @@ class DeployController extends Controller
 //        $localHash = 'sha1=' . hash_hmac('sha1', $githubPayload, $localToken, false);
 //        if (1 == 1) {
         ProcessDeploy::dispatch();
-
         return 'ok';
 //        }
     }
