@@ -91,3 +91,7 @@ sw.*
 
 nuxt.config.js
 ecosystem.config.js
+client/server.crt
+client/server.key
+client/package-lock.json
+client/yarn.lock
