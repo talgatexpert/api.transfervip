@@ -96,6 +96,7 @@
 																:items="types"
 																v-model="editedItem.car_type"
 																item-value="name"
+																return-object
 																item-text="name"
 																label="Araç Tipi"
 																:error-messages="errors.type"

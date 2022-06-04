@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     public const ROLES = [
         'super_admin' => 1,
@@ -223,5 +224,21 @@ class User extends Authenticatable
     public function getPermissions()
     {
        return json_decode($this->role->permissions, true);
+    }
+
+    public function setRole(string|int $role_id)
+    {
+        $this->role_id = $role_id;
+    }
+
+
+    public function setActive(bool $val)
+    {
+        $this->active = $val ? 1 : 0;
+    }
+
+    public function setPassword(string $password)
+    {
+        $this->password = bcrypt($password);
     }
 }

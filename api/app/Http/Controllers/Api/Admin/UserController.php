@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\UserResource;
 use App\Models\User;
+use App\Notifications\NewCompanyNotification;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -159,16 +160,19 @@ class UserController extends Controller
             'name' => ['required'],
             'email' => ['email', 'unique:users,email'],
             'password' => 'required',
-            'role' => 'required',
+            'role_id' => 'required',
             'active' => 'required',
         ]);
-        $user = new User();
-        $user->name = $request->get('name');
-        $user->email = $request->email;
-        $user->role_id = $request->role;
-        $user->password = $request->password;
-        $user->active = $request->exists('active') ? 1 : 0;
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email
+        ]);
+        $user->setActive($request->has('active'));
+        $user->setPassword($request->password);
+        $user->setRole($request->role_id);
         $user->save();
+
+        $user->notify(new NewCompanyNotification($user, $request->password));
         return $this->prepareResource($request);
     }
 
@@ -178,13 +182,15 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required'],
             'email' => ['email', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required',
+            'role_id' => 'required',
             'active' => 'required',
         ]);
-        $user->name = $request->get('name');
-        $user->email = $request->email;
-        $user->active = $request->active;
-        $user->role_id = $request->role;
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email
+        ]);
+        $user->setActive($request->has('active'));
+        $user->setRole($request->role_id);
         $user->save();
         return $this->prepareResource($request);
     }

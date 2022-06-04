@@ -83,9 +83,10 @@
 														label="Rol"
 														item-text="name"
 														item-value="id"
+														return-object
 														:error-messages="errors.role"
 												></v-select>
-												<v-text-field v-if="editedItem.hasOwnProperty('password')"
+												<v-text-field v-if="editedItem.hasOwnProperty('password') && !editedItem.id"
 												              v-model="editedItem.password"
 												              label="Şifre"
 												              :type="show1 ? 'text' : 'password'"
@@ -98,7 +99,6 @@
 												              placeholder="******"
 												              :error-messages="errors.password"
 
-
 												/>
 
 
@@ -106,6 +106,27 @@
 														class="label-0 mt-1"
 														v-model="editedItem.active"
 														label="Aktif"
+												/>
+												<v-checkbox
+														v-if="editedItem.id"
+														class="label-0 mt-1"
+														v-model="change_password"
+														@change="createField"
+														label="Şifreyi değiştir"
+												/>
+												<v-text-field v-if="change_password"
+												              v-model="editedItem.password"
+												              label="Yeni Şifre"
+												              :type="show1 ? 'text' : 'password'"
+												              append-outer-icon="mdi-backup-restore"
+												              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+												              @click:append="show1 = !show1"
+												              @click:append-outer="generatePassword"
+
+												              hint="At least 8 characters"
+												              placeholder="******"
+												              :error-messages="errors.password"
+
 												/>
 											</v-col>
 
@@ -197,6 +218,7 @@ export default {
 					href: '/users',
 				},
 			],
+			change_password: false,
 			pageTitle: 'Kullanıcıları düzenle',
 			dialog: false,
 			dialogDelete: false,
@@ -224,6 +246,7 @@ export default {
 				role: '',
 				active: false,
 				role_info: '',
+				changePassword: false,
 			},
 			roles: [],
 			defaultItem: {
@@ -234,6 +257,7 @@ export default {
 				active: false,
 				password: '',
 				role_info: '',
+				changePassword: false,
 
 			},
 
@@ -286,6 +310,13 @@ export default {
 		next();
 	},
 	methods: {
+
+		createField(value) {
+			if (value === false) {
+				return delete this.editedItem.password;
+			}
+			this.editedItem['password'] = null;
+		},
 		async initialize() {
 			this.users = await this.$store.getters['panel/user/GET_USERS']
 		},
@@ -311,9 +342,10 @@ export default {
 			for (let i = 0; i < this.size; i++) {
 				password += CharacterSet.charAt(Math.floor(Math.random() * CharacterSet.length));
 			}
-			if (this.editedItem.hasOwnProperty('password')) {
-				this.editedItem.password = password;
-			}
+			console.log(password)
+			this.show1 = true;
+			this.editedItem = {...this.editedItem, password}
+
 
 		},
 		async searchCompany() {
@@ -353,7 +385,6 @@ export default {
 			this.editedItem = Object.assign({}, item)
 			this.dialog = true
 
-			console.log(item)
 		},
 
 		deleteItem(item) {
@@ -373,7 +404,7 @@ export default {
 			this.dialog = false
 			await this.$store.dispatch('panel/user/CLEAR_ERROR')
 			this.errors = await this.$store.getters['panel/user/GET_ERRORS'];
-
+			this.change_password = false;
 			this.$nextTick(() => {
 				this.editedItem = Object.assign({}, this.defaultItem)
 				this.editedIndex = -1
@@ -391,25 +422,22 @@ export default {
 		async save() {
 			await this.$store.dispatch('panel/user/CLEAR_ERROR')
 
+			const payload = {
+				name: this.editedItem.name,
+				email: this.editedItem.email,
+				role_id: this.editedItem.role_info.id,
+				active: this.editedItem.active,
+				password: this.editedItem.password
+
+			};
 			if (this.editedItem.id) {
-
-				await this.$store.dispatch('panel/user/UPDATE_USER', {
-					id: this.editedItem.id,
-					name: this.editedItem.name,
-					email: this.editedItem.email,
-					role_id: this.editedItem.role_info.id,
-					active: this.editedItem.active,
-
-				});
+				let updated = {...payload, id: this.editedItem.id};
+				if (this.change_password) {
+					updated = {...updated, password: this.editedItem.password}
+				}
+				await this.$store.dispatch('panel/user/UPDATE_USER', updated);
 			} else {
-				await this.$store.dispatch('panel/user/CREATE_USER', {
-					name: this.editedItem.name,
-					email: this.editedItem.email,
-					password: this.editedItem.password,
-					role_id: this.editedItem.role_info.id,
-					active: this.editedItem.active,
-
-				});
+				await this.$store.dispatch('panel/user/CREATE_USER', payload);
 			}
 			this.search = '';
 			this.users = await this.$store.getters['panel/user/GET_USERS'];

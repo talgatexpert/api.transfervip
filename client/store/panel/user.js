@@ -49,7 +49,7 @@ export const actions = {
             password: payload.password,
             email: payload.email,
             active: payload.active,
-            role: payload.role_id
+            role_id: payload.role_id
         }).then(result => {
 
 
@@ -67,12 +67,7 @@ export const actions = {
 
     },
     async UPDATE_USER({commit}, payload) {
-        await this.$axios.put(USERS_URL + payload.id, {
-            name: payload.name,
-            email: payload.email,
-            active: payload.active,
-            role: payload.role_id
-        }).then(result => {
+        await this.$axios.put(USERS_URL + payload.id, payload).then(result => {
             commit('SET_USERS', result.data.data.users)
             commit('SET_ROLES', result.data.data.roles)
             commit('SET_TOTAL', result.data.data.total)

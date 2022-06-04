@@ -1,12 +1,12 @@
 {
-  "name": "Lux elit travel",
+  "name": "lux-elit-travel",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "./node_modules/nuxt/bin/nuxt.js",
-    "build": "./node_modules/nuxt/bin/nuxt.js build",
-    "start": "./node_modules/nuxt/bin/nuxt.js start",
-    "generate": "./node_modules/nuxt/bin/nuxt.js generate"
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
   },
   "dependencies": {
     "@nuxt/builder": "^2.15.8",
