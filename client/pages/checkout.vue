@@ -58,7 +58,7 @@
 						                  :errors="errors"
 						                  :step="target_step"
 						                  @update-details="updateDetails"
-						                  @details-error="getErrors"
+						                  @details-error="errorIsset"
 						                  :changed="changed"></transfer-details>
 						<payment @select-payment="selectPayment" :step="target_step" v-if="show_payment"></payment>
 
@@ -122,6 +122,7 @@ import VueMoment from 'vue-moment'
 import moment from 'moment-timezone'
 import login from "./login";
 import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
+import {useLocaleCode} from "../hooks/locale";
 
 if (!Vue.moment) {
 	Vue.use(VueMoment, {
@@ -156,28 +157,12 @@ export default Vue.extend({
 
 		}
 	},
-	async asyncData({app, query}) {
+	async asyncData({app, query, i18n}) {
+		const language = useLocaleCode(i18n)
 		await app.store.dispatch('transfer/getBooking', {booking_token: query.booking_token,});
 		const data = await app.store.getters['transfer/booking'];
-		const getCityTranslation = (data) => {
-			let city_data = {
-				city_from: '',
-				city_end: ''
-			};
-			if (app.i18n.locale === 'tr') {
-				city_data.city_from = data.city_from.turkish
-				city_data.city_end = data.city_end.turkish
-			} else if (app.i18n.locale === 'ru') {
-				city_data.city_from = data.city_from.russian
-				city_data.city_end = data.city_end.russian
-			} else if (app.i18n.locale === 'en') {
-				city_data.city_from = data.city_from.english
-				city_data.city_end = data.city_end.english
-			}
-			return city_data
-		};
 		let form = JSON.parse(JSON.stringify(data));
-		form = Object.assign(form, getCityTranslation(data))
+		form = {...form, city_end: data.city_end[language], city_from: data.city_from[language]};
 
 		return {form, transferDetail: data, target_step: data.step ?? 'step_1'}
 	},
@@ -208,11 +193,11 @@ export default Vue.extend({
 			}
 		},
 		async getFormInfo() {
+			const language = useLocaleCode(this.$i18n)
 			const data = await this.$store.getters['transfer/booking'];
-			const city_data = this.getCityTranslation(data)
 			this.form = JSON.parse(JSON.stringify(this.form));
-			this.form = Object.assign(this.form, data)
-			this.form = Object.assign(this.form, city_data)
+			this.form = {...data, ...this.form, city_end: data.city_end[language], city_from: data.city_from[language]}
+
 			if (this.returnTrip) {
 				this.form = {
 					...this.form, city_from: this.form.city_end, city_end: this.form.city_from,
@@ -223,18 +208,14 @@ export default Vue.extend({
 				}
 			}
 		},
-		getErrors(errors) {
-			let count = Object.keys(errors).length;
-			this.errors = count !== 0;
-
+		errorIsset(errors) {
+			this.errors = Object.keys(errors).length !== 0;
 		},
 
 		async continue_payment() {
 			if (this.errors) {
 				return;
 			}
-			console.log(this.errors)
-
 
 			this.edit = false;
 			this.changed = true;
@@ -251,7 +232,7 @@ export default Vue.extend({
 				await this.$store.dispatch('transfer/confirmBooking', {...this.form, payment_method: this.paymentMethod})
 				this.loading_confirm = false
 				await this.$router.push({
-					path: this.$i18n.locale === 'tr' ? '/success' : '/' + this.$i18n.locale + '/success',
+					path: '/' + this.$i18n.locale + '/success',
 					query: {
 						booking_token: this.$route.query.booking_token,
 						car_id: this.$route.query.car_id,
@@ -276,25 +257,7 @@ export default Vue.extend({
 			this.step_2 = false;
 			this.step_3 = false;
 		},
-		getCityTranslation(data) {
-			const city_data = {
-				city_from: '',
-				city_end: ''
-			};
-			if (this.$i18n.locale === 'tr') {
-				city_data.city_from = data.city_from.turkish
-				city_data.city_end = data.city_end.turkish
-			} else if (this.$i18n.locale === 'ru') {
-				city_data.city_from = data.city_from.russian
-				city_data.city_end = data.city_end.russian
-			} else if (this.$i18n.locale === 'en') {
-				city_data.city_from = data.city_from.english
-				city_data.city_end = data.city_end.english
-			}
-			return city_data
-		},
 		async updateDetails(payload) {
-
 			this.form = payload
 		}
 	}

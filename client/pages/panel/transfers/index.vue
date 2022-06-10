@@ -41,7 +41,7 @@
                 color="primary"
                 dark
                 class="mb-2 col-sm-12"
-                to="/panel/transfers/new"
+                :to="`/${$i18n.locale}/panel/transfers/new`"
               >
                 Yeni transfer
               </v-btn>
@@ -92,24 +92,35 @@
 
 <script>
 import HeaderAdmin from "../../../components/admin/HeaderAdmin";
+import {useLocale} from "../../../hooks/locale";
 
 export default {
   name: "index",
   components: {HeaderAdmin},
   layout: "admin",
+	head() {
+		return {
+			title: this.title,
+			meta: this.meta
+		}
+	},
+	async asyncData({$axios, i18n}) {
+		const locale = useLocale(i18n);
+		return {language: locale.name_en.toLowerCase()}
+	},
   data() {
     return {
 			loading: true,
       breadcrumbsList: [
         {
-          text: 'Kontrol paneli',
+          text: this.$t('panel.dashboard'),
           disabled: true,
-          href: '/panel/dashboard',
+          href: '/' + this.$i18n.locale + '/panel/dashboard',
         },
         {
-          text: 'Transfers',
+          text: this.$t('panel.menu.transfers'),
           disabled: true,
-          href: '/transfers',
+          href: '/' + this.$i18n.locale +   '/transfers',
         },
       ],
       pageTitle: 'Edit transfers',
@@ -170,7 +181,8 @@ export default {
         updated_at: '',
       },
       search: '',
-      pagination:
+	    language: 'turkish',
+	    pagination:
         {
           descending: !!this.$route.query.desc,
           sortBy: this.$route.query.orderby || 'id',
@@ -189,6 +201,9 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? 'Transfer ekle' : 'Transfer düzenle'
     },
+	  base_route(){
+			return  '?page=1&limit=10&orderby=id' +  '&language=' + this.language
+	  }
   },
 
   watch: {
@@ -200,11 +215,9 @@ export default {
     },
   },
 
-  created() {
-  },
 
   async mounted() {
-    await this.$store.dispatch('panel/transfer/GET_TRANSFERS', '?page=1&limit=10&orderby=id');
+    await this.$store.dispatch('panel/transfer/GET_TRANSFERS', this.base_route);
 	  this.transfers = await this.$store.getters['panel/transfer/GET_TRANSFERS']
 	  this.totalNumberOfItems = await this.$store.getters['panel/transfer/GET_TOTAL']
 		this.loading = false;
@@ -216,7 +229,7 @@ export default {
   },
   methods: {
     async initialize() {
-      await this.$store.dispatch('panel/transfer/GET_TRANSFERS', '?page=1&limit=10&orderby=id');
+      await this.$store.dispatch('panel/transfer/GET_TRANSFERS', this.base_route);
       this.transfers = await this.$store.getters['panel/transfer/GET_TRANSFERS']
     },
 
@@ -229,7 +242,7 @@ export default {
         this.$data.transfers = await this.$store.getters['panel/transfer/GET_TRANSFERS']
         this.$data.totalNumberOfItems = await this.$store.getters['panel/transfer/GET_TOTAL']
       } else {
-        await this.$store.dispatch('panel/transfer/GET_TRANSFERS', '?page=1&limit=10&orderby=id');
+        await this.$store.dispatch('panel/transfer/GET_TRANSFERS', this.base_route);
         this.$data.transfers = await this.$store.getters['panel/transfer/GET_TRANSFERS']
         this.$data.totalNumberOfItems = await this.$store.getters['panel/transfer/GET_TOTAL']
       }
@@ -241,8 +254,8 @@ export default {
       const page = query.page ?? 1;
       const sortBy = query.sort ?? "ASC";
       let perPage = query.limit ?? 10;
-
-      return '?limit=' + perPage + '&orderby=' + paginate.sortBy + '&page=' + page + '&sort=' + sortBy;
+			let str = '?limit=' + perPage + '&orderby=' + paginate.sortBy + '&page=' + page + '&sort=' + sortBy + '&language=' + this.language;
+      return str;
     },
 
     async fetchData(route = null) {
@@ -255,9 +268,9 @@ export default {
       this.editedIndex = this.transfers.indexOf(item)
       this.editedItem = Object.assign({}, item)
       if (this.editedItem.id) {
-        this.$router.push('/panel/transfers/' + this.editedItem.id + '?from=' + this.editedItem.direction)
+        this.$router.push('/' + this.$i18n.locale +  '/panel/transfers/' + this.editedItem.id + '?from=' + this.editedItem.direction)
       } else {
-        this.$router.push('/panel/transfers/new')
+        this.$router.push('/' + this.$i18n.locale +  '/panel/transfers/new')
       }
     },
 
@@ -330,11 +343,12 @@ export default {
         obj.sort = "ASC"
       } else {
         obj.sort = "DESC"
-
       }
+	    obj.language = this.language
 
 
-      // check if old and new query are the same - VueRouter will not change the route if they are, so probably this is the first page loading
+
+	    // check if old and new query are the same - VueRouter will not change the route if they are, so probably this is the first page loading
 
       await this.$router.replace({...this.$router.currentRoute, query: obj}).catch((error) => {
         console.log('TRANSFER ERROR')

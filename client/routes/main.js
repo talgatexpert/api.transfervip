@@ -1,0 +1,14 @@
+export const API_URL = "http://localhost:8000/api";
+export const DOMAIN_URL = "http://localhost:8000";
+export const SETTINGS_URL = "settings/";
+export const TRANSFER_CITIES_URL = "transfer/cities/";
+export const TRANSFERS_URL = "transfers/";
+export const BOOKINGS_URL = "bookings/";
+export const BOOKINGS_CONFIRM_URL = "bookings/confirm/";
+export const CITY_URL = "city/";
+export const SANCTUM_COOKIES = DOMAIN_URL + "/sanctum/csrf-cookie";
+export const TRANSPORT = "message/transport/";
+export const CORPORATE = "message/corporate/";
+export const CONTACT_MESSAGE = "message/contact/";
+export const TRAVEL = "message/travel/";
+export const CLIENT = "client/";

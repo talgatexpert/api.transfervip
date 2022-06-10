@@ -25,28 +25,28 @@ class CarController extends Controller
         $search = $request->get('search') ?? null;
 
         $user = auth()->user();
-        $company = $user->company()->id ?? 0;
+        $company = $user->company->id ?? 0;
 
         if ($limit == "all" && is_null($search) && $orderBy !== "owner") {
-            $cars = Car::where('company_id', $company)->orderBy($orderBy, $sort)->get();
+            $cars = Car::with('company')->where('company_id', $company)->orderBy($orderBy, $sort)->get();
         } elseif ($limit !== "all" && is_null($search) && $orderBy !== "owner") {
 
-            $cars = Car::where('company_id', $company)->orderBy($orderBy, $sort)->paginate($limit);
+            $cars = Car::with('company')->where('company_id', $company)->orderBy($orderBy, $sort)->paginate($limit);
 
         } elseif ($orderBy == "owner" && $limit !== "all") {
 
-            $cars = Car::where('company_id', $company)->with(['user' => function ($query) use ($sort) {
+            $cars = Car::with('company')->where('company_id', $company)->with(['user' => function ($query) use ($sort) {
                 return $query->orderBy('name', $sort);
             }])->paginate($limit);
 
         } elseif ($orderBy === "owner" && $limit == "all") {
 
-            $cars = Car::where('company_id', $company)->with(['user' => function ($query) use ($sort) {
+            $cars = Car::with('company')->where('company_id', $company)->with(['user' => function ($query) use ($sort) {
                 return $query->orderBy('name', $sort);
             }])->get();
 
         } elseif ($search) {
-            $cars = Car::where('company_id', $company)->where('name', 'like', '%' . $search . '%')
+            $cars = Car::with('company')->where('company_id', $company)->where('name', 'like', '%' . $search . '%')
                 ->orWhere('model', 'like', '%' . $search . '%')
                 ->orWhere('type', 'like', '%' . $search . '%')
                 ->orderBy($orderBy, $sort)->paginate($limit);
@@ -65,7 +65,7 @@ class CarController extends Controller
     public function store(Request $request): CarResource
     {
         $user = auth()->user();
-        $company = $user->company()->id ?? 0;
+        $company = $user->company->id ?? 0;
         $request->validate([
             'name' => ['required'],
             'model' => 'required',
@@ -100,7 +100,7 @@ class CarController extends Controller
             $image = $request->file('new_image');
             $fileName = Str::random(18) . '.' . $image->getClientOriginalExtension();
             $image->storeAs('public/images', $fileName);
-            return env('APP_URL') . Storage::url('public/images/' . $fileName);
+            return  Storage::disk('public')->url('public/images/' . $fileName);
         }
         return $request->image;
     }

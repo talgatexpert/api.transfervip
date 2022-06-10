@@ -32,12 +32,22 @@ class TransferController extends Controller
     public function prepareResource(Request $request): TransferResource
     {
 
+        if ($this->user->getRole() === 'super_admin'){
+            $transfers = $this->transfersAdmin($request);
+        }else{
+            $transfers = $this->transfersCompany($request);
+        }
+        return new TransferResource($transfers);
+    }
+
+
+    public function transfersCompany(Request $request)
+    {
         $limit = $request->get('limit') ?? 10;
         $orderBy = $request->get('orderby') ?? 'id';
         $sort = $request->get('sort') ?? 'ASC';
         $search = $request->exists('search') ? $request->get('search') : null;
-
-
+        $transfers = [];
         if ($limit == "all" && is_null($search) && $orderBy !== "owner") {
             $transfers = Transfer::where('company_id', $this->company_id)
                 ->with(['cars', 'startCity', 'endCity'])
@@ -63,11 +73,48 @@ class TransferController extends Controller
                     'endCity'])
                 ->orderBy($orderBy, $sort)->get();
         }
-
-
-        return new TransferResource($transfers);
+        return $transfers;
     }
 
+    public function transfersAdmin(Request $request)
+    {
+
+        
+        $limit = $request->get('limit') ?? 10;
+        $orderBy = $request->get('orderby') ?? 'id';
+        $sort = $request->get('sort') ?? 'ASC';
+        $search = $request->exists('search') ? $request->get('search') : null;
+        $transfers = [];
+
+        if ($limit == "all" && is_null($search) && $orderBy !== "owner") {
+            $transfers = Transfer::where('company_id',  '>=', $this->company_id)
+                ->with(['cars', 'startCity', 'endCity'])
+                ->orderBy($orderBy, $sort)->get();
+        } elseif ($limit !== "all" && is_null($search)) {
+
+            $transfers = Transfer::has('cars')->has('startCity')->has('endCity')->where('company_id', '>=', $this->company_id)
+                ->with(['cars', 'startCity', 'endCity'])
+                ->orderBy($orderBy, $sort)->paginate($limit);
+
+        } elseif (!is_null($search)) {
+
+            $transfers = Transfer::whereHas('cars', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            })->orWhereHas('startCity', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            })->orWhereHas('endCity', function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            })->where('company_id', $this->company_id)
+                ->with([
+                    'cars',
+                    'startCity',
+                    'endCity'])
+                ->orderBy($orderBy, $sort)->get();
+        }
+
+        return $transfers;
+
+    }
 
     public function store(TransferRequest $request)
     {

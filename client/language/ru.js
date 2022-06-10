@@ -1,5 +1,8 @@
-module.exports = {
+import panel from "~/language/panel/ru";
+
+export default  {
   header_title: "Онлайн заказ такси-трансферов <br> в более чем 13 000 направлениях",
+  panel: {...panel},
   menu: {
     business: "Для бизнеса",
     cabinet: "Кабинет",
@@ -42,9 +45,12 @@ module.exports = {
 
   },
   corp: {
-    title: 'Effective business-solutions',
-    subtitle: 'Consolidated management for corporate clients. High-quality services. Streamlining of work.',
-
+    title: 'Партнерская программа для туристических фирм',
+    subtitle: 'Закажите экскурсии для своих гостей заранее. Комфорт - это просто и безопасно.',
+  },
+  transport: {
+    title: 'Эффективные бизнес-решения',
+    subtitle: 'Консолидированное управление для корпоративных клиентов. Высококачественные услуги. Упорядочение работы.',
   },
   how_work: {
     title: "Как мы работаем?",

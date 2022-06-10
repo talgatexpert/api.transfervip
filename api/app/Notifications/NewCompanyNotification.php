@@ -42,10 +42,11 @@ class NewCompanyNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('Welcome to' . config('app.name'))
+            ->line('Welcome to ' . config('app.name'))
             ->line('Now you can login to the our system')
-            ->line('Email: ' . $this->user->email . ' and your password is: ' . $this->password)
-            ->action('Notification Action', url('/'))
+            ->line('Email: ' . $this->user->email)
+            ->line('Password: ' . $this->password)
+            ->action('You can login to system from here', config('app.panel'))
             ->line('Thank you for using our application!');
     }
 

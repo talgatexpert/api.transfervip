@@ -204,6 +204,7 @@
 <script>
 import HeaderAdmin from "../../components/admin/HeaderAdmin";
 import login from "../login";
+import {getMetaData} from "../../hooks/meta";
 
 export default {
 	name: "cars",
@@ -214,14 +215,14 @@ export default {
 			loading: true,
 			breadcrumbs: [
 				{
-					text: 'Kontrol paneli',
+					text: this.$t('panel.dashboard'),
 					disabled: false,
-					href: '/panel',
+					href: '/' + this.$i18n.locale + '/panel',
 				},
 				{
-					text: 'Cars',
+					text: this.$t('panel.menu.cars'),
 					disabled: true,
-					href: '/cars',
+					href:'/' + this.$i18n.locale +   '/cars',
 				},
 			],
 			pageTitle: 'Araçlari  düzenle',
@@ -320,6 +321,17 @@ export default {
 			errors: [],
 
 
+		}
+	},
+
+	async asyncData({$axios, i18n}) {
+		return getMetaData($axios, i18n, i18n.t('panel.menu.cars'), true)
+	},
+
+	head() {
+		return {
+			title: this.title,
+			meta: this.meta
 		}
 	},
 

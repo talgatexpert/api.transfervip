@@ -76,7 +76,9 @@ class UserController extends Controller
             'role_id' => (int)$user->role_id,
             'role' => User::ROLE_TEXT[(int)$user->role_id],
             'hidden_role' => $user->getRole(),
-            'permissions' => $user->getPermissions()
+            'permissions' => $user->getPermissions(),
+            'company_id' => $user?->company?->id ?? null
+
         ]);
 
     }

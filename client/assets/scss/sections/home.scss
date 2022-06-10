@@ -56,6 +56,9 @@ main {
   &.bg-corp:before{
     background-image: url(~/assets/img/bg-clients.jpg);
   }
+  &.bg-office:before{
+    background-image: url(~/assets/img/bg-office.jpg);
+  }
 
   &:after {
     position: absolute;

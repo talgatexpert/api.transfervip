@@ -1,4 +1,6 @@
-module.exports = {
+import panel from "~/language/panel/en";
+
+export default  {
     header_title: "Find and book online taxi & transfers <br> in more than 13,000 destinations worldwide",
     menu: {
         business: "Business",
@@ -21,6 +23,8 @@ module.exports = {
     },
     from: "From",
     to: "To",
+
+    panel: {...panel},
 
     datapicker_from: "City, airport or railway station",
     datapicker_to: "City, airport or railway station",
@@ -52,9 +56,12 @@ module.exports = {
         final: "Our driver meets you with a nameplate"
     },
     corp: {
+        title: 'Affiliate program for hotels',
+        subtitle: 'Book trips for your guests in advance. Comfort is simple and safe.',
+    },
+    transport: {
         title: 'Effective business-solutions',
         subtitle: 'Consolidated management for corporate clients. High-quality services. Streamlining of work.',
-
     },
     about: {
         title: 'About Lux Elit Travel',

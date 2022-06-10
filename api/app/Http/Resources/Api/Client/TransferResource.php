@@ -20,10 +20,12 @@ class TransferResource extends JsonResource
      */
     public function toArray($request)
     {
-        if ($this->resource instanceof LengthAwarePaginator || $this->resource instanceof Collection) {
+        if ($this->resource instanceof LengthAwarePaginator) {
             return [
-                'total' => $this->resource->count(),
+                'total' => $this->resource->total(),
                 'items' => $this->items(),
+                'from' => $this->additional['from'],
+                'to' => $this->additional['to'],
             ];
         }
     }
@@ -46,9 +48,10 @@ class TransferResource extends JsonResource
     {
         $translation_start = $resource->startCity->getTranslations();
         $translation = $resource->endCity->getTranslations();
+        $language = request('language') || "turkish";
         return [
             'id' => $resource->id,
-            'direction' => $translation_start['translations']['turkish'] . ' - ' . $translation['translations']['turkish'],
+            'direction' => $this->additional['from'] . ' - ' . $this->additional['to'],
             'start_city' => array_merge(['id' => $resource->startCity->id, 'name' => $resource->startCity->name], $translation_start),
             'end_city' => array_merge(['id' => $resource->endCity->id, 'name' => $resource->endCity->name], $translation),
             'tax' => $resource->tax . '%',
@@ -73,13 +76,9 @@ class TransferResource extends JsonResource
 
         $result = [];
         foreach ($cars as $car) {
-            $price = DB::table('transfer_cars')->select('price')->where('transfer_id', $resource->id)->where('car_id', $car->id)->first();
-            $tax = $resource->company?->tax;
-            $rates = $converterService->convert($price->price, $currency);
-            $withTax = ceil(($rates / 100 * $tax) + $rates);
-            $ifCurrencyRateNotWorking = ceil((ceil($price->price) / 100 * $tax) + $price->price);
-            $price = $rates !== false ? $withTax : $ifCurrencyRateNotWorking;
-            $price = request('return_trip') == 'true' ? $price * 2 : $price;
+            $price = $car->getCarPrice(false, $car, $resource->id, $currency, $converterService);
+
+            $price = request('return_trip') === 'true' ? $price * 2 : $price;
             $result[] = [
                 'id' => $car->id,
                 'name' => $car->name,
@@ -87,7 +86,8 @@ class TransferResource extends JsonResource
                 'full_name' => $car->name . ' ' . $car->model,
                 'image' => $car->image,
                 'type' => $car->type,
-                'price' => $price,
+                'active' => $car->active,
+                'price' => $price['price'],
                 'person_quantity' => $car->person_quantity,
                 'baggage_quantity' => $car->baggage_quantity,
             ];

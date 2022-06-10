@@ -20,32 +20,24 @@ class BookingResource extends JsonResource
 
         $city_start = $booking->transfer->startCity->getTranslations();
         $city_end = $booking->transfer->endCity->getTranslations();
-        $price = DB::table('transfer_cars')->select('price')->where('transfer_id', $booking->transfer->id)->where('car_id', $booking->car_id)->first();
-        $converterService = new  CurrencyConverterService();
-
-        $currency = $booking->currency;
-        $tax = $booking->company?->tax;
-        $rates = $converterService->convert($price->price, $currency);
-
-        $withTax = ceil((ceil($rates) / 100 * $tax) + $rates);
-        $ifCurrencyRateNotWorking = ceil((ceil($price->price) / 100 * $tax) + $price->price);
-        $price = $rates !== false ? $withTax : $ifCurrencyRateNotWorking;
+        $price = $booking->car->getCarPrice($booking, $booking->car, $booking->transfer_id, request('currency') ?? 'TRY', new CurrencyConverterService());
 
         $returnBooking = $booking->returnBooking;
         $data = [
             'city_from' => $city_start['translations'],
             'city_end' => $city_end['translations'],
             'car' => [
+                'id' => $booking->car_id,
                 'name' => $booking->car->name,
                 'full_name' => $booking->car->getFullName(),
                 'baggage_quantity' => $booking->car->baggage_quantity,
                 'type' => $booking->car->type,
                 'person_quantity' => $booking->car->person_quantity,
             ],
-            'price' => $price,
-            'price_with_currency' => $price . ' ' . $booking->currency,
-            'return_price' => $price,
-            'return_price_with_currency' => $price . ' ' . $booking->currency,
+            'price' => $price['one_trip'],
+            'price_with_currency' => $price['one_trip'] . ' ' . $booking->currency,
+            'return_price' => $price['one_trip'],
+            'return_price_with_currency' => $price['one_trip'] . ' ' . $booking->currency,
             'name' => $booking->name,
             'address' => $booking->address,
             'step' => $booking->step,
@@ -66,8 +58,8 @@ class BookingResource extends JsonResource
                 'address' => $returnBooking?->address,
 
             ],
-            'total' => $booking->return_trip != false ? $price + $price : $price,
-            'total_with_currency' => $booking->return_trip != false ? $price + $price . ' ' . $booking->currency : $price . ' ' . $booking->currency,
+            'total' => $price['price'],
+            'total_with_currency' => $price['price'] . ' ' . $booking->currency,
 
         ];
         if ($booking->client_confirmed === true) {

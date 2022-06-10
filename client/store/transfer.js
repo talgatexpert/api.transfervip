@@ -1,3 +1,5 @@
+import {BOOKINGS_CONFIRM_URL, BOOKINGS_URL, TRANSFERS_URL} from "~/routes/main";
+
 export const state = () => ({
     transfers: [],
     message: '',
@@ -37,27 +39,26 @@ export const mutations = {
 }
 export const actions = {
     async get({commit}, payload) {
-        let url = `/transfers/${payload.city_from}/${payload.city_to}`;
+        let url = `/${TRANSFERS_URL + payload.city_from}/${payload.city_to}`;
         if (payload.currency) {
             url += '?currency=' + payload.currency
         }
         if (payload.return_trip && payload.currency) {
-            url += '&return_trip=true'
+            url += '&return_trip=' + payload.return_trip
         }
+        url += '&language=' + payload.language
         await this.$axios.$get(url).then(({data}) => {
-
-            if (data) {
+            if (data)
                 commit('SET_TRANSFERS', data)
-            }
-        }).catch(e => {
-            const data = e.response?.data
-            if (data) {
-                commit('NOT_FOUND', data.message)
+
+        }).catch(error => {
+            if (error.response) {
+                commit('NOT_FOUND', error.response.data.message)
             }
         })
     },
     async setBooking({commit}, payload) {
-        await this.$axios.post('bookings', payload).then(({data}) => {
+        await this.$axios.post(BOOKINGS_URL, payload).then(({data}) => {
             if (data.success)
                 commit('SET_TOKEN', data.booking_token)
         })
@@ -65,44 +66,46 @@ export const actions = {
     async saveBooking({commit}, payload) {
         console.log(payload)
         if (payload?.updateCurrency)
-            await this.$axios.put('bookings/' + payload.booking_token + '/updateCurrency', payload).then(({data}) => {
+            await this.$axios.put(BOOKINGS_URL + payload.booking_token + '/updateCurrency', payload).then(({data}) => {
                 commit('SET_BOOKING', data.data)
             }).catch(error => {
                 commit('SET_ERROR', error.response.data.errors)
             })
 
         else {
-            await this.$axios.put('bookings/' + payload.booking_token + '/updateReturnTrip', payload).then(({data}) => {
+            await this.$axios.put(BOOKINGS_URL + payload.booking_token + '/updateReturnTrip', payload).then(({data}) => {
                 commit('SET_BOOKING', data.data)
             })
-            await this.$axios.put('bookings/' + payload.booking_token, payload).then(({data}) => {
+            await this.$axios.put(BOOKINGS_URL + payload.booking_token, payload).then(({data}) => {
                 commit('SET_BOOKING', data.data)
                 commit('SET_ERROR', [])
             }).catch(error => {
-                commit('SET_ERROR', error.response.data.errors)
+                if (error.response)
+                    commit('SET_ERROR', error.response.data.errors)
             })
         }
     },
     async getBooking({commit}, payload) {
         await this.$axios.get('bookings/' + payload.booking_token, payload).then(({data}) => {
             commit('SET_BOOKING', data.data)
+        }).catch(error => {
+            if (error.response)
+                commit('SET_ERROR', error.response.data)
         })
     },
-    async setBookingForm({commit}, payload) {
-        commit('SET_FORM', payload);
-    },
+
     setTransferData({commit}, payload) {
         commit('SET_TRANSFER_DATA', payload)
     },
-   async confirmBooking({commit}, payload){
-        await this.$axios.put('bookings/' + payload.booking_token + '/confirm', payload).then(({data}) => {
+    async confirmBooking({commit}, payload) {
+        await this.$axios.put(BOOKINGS_URL + payload.booking_token + '/confirm', payload).then(({data}) => {
             commit('SET_CONFIRM_BOOKING', data.data)
         }).catch(error => {
             commit('SET_ERROR', error.response.data.errors)
         })
     },
     async getConfirmBooking({commit}, payload) {
-        await this.$axios.get('bookings/confirm/' + payload.booking_token, payload).then(({data}) => {
+        await this.$axios.get(BOOKINGS_CONFIRM_URL + payload.booking_token, payload).then(({data}) => {
             commit('SET_CONFIRM_BOOKING', data.data)
         })
     },

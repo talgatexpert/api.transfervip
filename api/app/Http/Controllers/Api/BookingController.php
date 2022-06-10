@@ -7,7 +7,10 @@ use App\Http\Requests\Api\BookingRequest;
 use App\Http\Resources\Api\BookingResource;
 use App\Mail\BookingNotificartioToAdmin;
 use App\Models\Booking;
+use App\Models\Car;
+use App\Services\CurrencyConverterService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
@@ -18,6 +21,11 @@ class BookingController extends Controller
 
         $booking->company_id = $booking->transfer?->company?->id ?? 0;
         $booking->save();
+        $price = Car::getCarPrice($booking, $booking->car, $request->transfer_id, $request->currency, new CurrencyConverterService());
+
+
+        $booking->update(['company_tax' => $price['company_tax']]);
+
 
         $booking->setBookingToken();
         return response([
@@ -148,13 +156,11 @@ class BookingController extends Controller
     public function confirm(Request $request, $booking_token)
     {
         $booking = Booking::where('booking_token', $booking_token)->first();
-        if ($booking)
-            if ($request->payment_method == 'cash') {
-                $booking->setClientConfirm($request->payment_method);
-                $companyEmail = $booking?->compnay?->email ?? env('SUPER_ADMIN_EMAIL');
-                Mail::to($companyEmail)->send(new BookingNotificartioToAdmin($booking));
-                return new BookingResource($booking);
-            }
+        if ($booking) {
+            $booking->setClientConfirm($request->payment_method);
+            return new BookingResource($booking);
+        }
+
         return response(['success' => false, 'message' => 'Booking not found']);
 
 

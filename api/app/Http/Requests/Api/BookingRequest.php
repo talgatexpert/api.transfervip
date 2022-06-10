@@ -24,13 +24,10 @@ class BookingRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'booking_token' => 'required|uuid',
             'started_at' => 'required',
             'started_at_time' => 'required',
-//            'return_booking.address' => 'required',
-//            'return_booking.started_at' => 'required',
-//            'return_booking.started_at_time' => 'required',
             'email' => 'email',
             'name' => 'required',
             'phone' => 'required',
@@ -38,6 +35,14 @@ class BookingRequest extends FormRequest
             'flight_number' => 'required',
             'passengers_number' => 'required'
         ];
+        if ($this->return_trip) {
+            $rules += [
+                'return_booking.address' => 'required',
+                'return_booking.started_at' => 'required|after_or_equal:started_at',
+                'return_booking.started_at_time' => 'required',
+            ];
+        }
+        return $rules;
     }
 
 

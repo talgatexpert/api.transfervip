@@ -31,6 +31,9 @@ class AuthController extends Controller
             $user = auth()->user();
 
             $token = explode('|', $this->generateToken($user));
+            $user->api_token  = $token[1];
+            $user->save();
+
             return response( ['data' =>
                 ['user' => $user,
                 'name' => $user->name,
@@ -39,7 +42,10 @@ class AuthController extends Controller
                 'role' => User::ROLE_TEXT[(int)$user->role_id],
                 'hidden_role' => $user->getRole(),
                 'permissions' => $user->getPermissions(),
-                'token' => $token[1]]]);
+                'token' => $token[1],
+                'company_id' => $user?->company?->id ?? null
+                ]]);
+
         } else {
             return response(['errors' => [
                 'message' => 'The provided credentials are incorrect.',
@@ -73,7 +79,10 @@ class AuthController extends Controller
 
     public function logout(): Response
     {
-        auth()->user()->tokens()->delete();
+        $user = auth()->user();
+        $user->tokens()->delete();
+        $user->api_token  = null;
+        $user->save();
         auth()->logout();
         return response(['message' => 'Successfully logout']);
     }

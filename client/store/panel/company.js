@@ -5,11 +5,15 @@ export const state = () => ({
     total: 0,
     errors: [],
     users: [],
+    company: {},
 });
 
 export const mutations = {
     SET_COMPANY(state, payload) {
         state.companies = payload
+    },
+    SET_ONE_COMPANY(state, payload) {
+        state.company = payload
     },
     SET_USERS(state, payload) {
         state.users = payload
@@ -30,6 +34,13 @@ export const actions = {
         }).catch(error => {
             commit('SET_ERROR', error.response.data.errors)
         })
+    },
+    async GET_COMPANY_DETAILS({commit}, payload){
+     await this.$axios.get(COMPANY_URL + payload.id).then(({data}) => {
+            commit("SET_ONE_COMPANY", data.data)
+      }).catch(e => {
+          console.log(e)
+      })
     },
     async CREATE_COMPANY({commit}, payload) {
 
@@ -97,6 +108,9 @@ export const actions = {
 export const getters = {
     GET_COMPANY(state) {
         return state.companies
+    },
+    GET_COMPANY_DETAILS(state) {
+        return state.company
     },
     GET_USERS(state) {
         return state.users;

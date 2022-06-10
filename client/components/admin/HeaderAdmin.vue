@@ -6,6 +6,7 @@
 					<breadcrumbs color-white="color-white" :items="breadcrumbsList" class="pl-0 "></breadcrumbs>
 				</v-col>
 				<v-col cols="12" md="4" sm="4" class="d-flex align-items-center justify-content-end">
+					<language-switcher></language-switcher>
 					<v-badge
 							bordered
 							color="error"
@@ -41,6 +42,7 @@
 <script>
 import Breadcrumbs from "../Breadcrumbs";
 import {BOOKINGS_DETAIL_URL} from "../../routes/panel";
+import LanguageSwitcher from "./languageSwitcher";
 
 export default {
 	name: "HeaderAdmin",
@@ -58,7 +60,7 @@ export default {
 			show: false,
 		}
 	},
-	components: {Breadcrumbs},
+	components: {LanguageSwitcher, Breadcrumbs},
 
 	watch: {
 		count(val){
@@ -76,7 +78,7 @@ export default {
 
 	computed: {
 		username() {
-			return 'Hi ' + this.$auth.user.name
+			return  this.$t('panel.hello') + " " + this.$auth.user.name
 		},
 
 	},

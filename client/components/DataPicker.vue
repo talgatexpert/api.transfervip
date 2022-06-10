@@ -46,7 +46,7 @@
 				</div>
 
 				<div class="form-group">
-					<button class="btn main-form__btn" >Search</button>
+					<button class="btn main-form__btn">Search</button>
 				</div>
 
 				<div class="custom-checkbox">
@@ -65,6 +65,7 @@
 <script>
 import Cookies from "js-cookie";
 import login from "../pages/login";
+import {useLocale, useLocaleCode} from "../hooks/locale";
 
 export default {
 	name: "DataPicker",
@@ -97,41 +98,39 @@ export default {
 			this.inputValueTo = data.inputValueTo
 			this.inputValueFrom = data.inputValueFrom
 		}
-
-
 	},
-
-	async asyncData({app}) {
-		await app.store.dispatch('city/LOAD_CITY')
-
+	async asyncData({store, i18n}) {
+		const language = useLocaleCode(i18n);
+		await store.dispatch('city/LOAD_CITY', {search: null, language, city: null})
 	},
 
 	methods: {
-		changeDirection(event) {
+		async changeDirection(event) {
 			const cityFrom = this.$store.getters['city/getCityFrom']
 			const cityTo = this.$store.getters['city/getCityTo']
-			this.$store.dispatch('city/CHANGE_DIRECTION', {
+			await this.$store.dispatch('city/CHANGE_DIRECTION', {
 				cityFrom, cityTo
 			})
 			this.inputValueFrom = this.$store.getters['city/getCityFrom'].name
 			this.inputValueTo = this.$store.getters['city/getCityTo'].name
 		},
-		clear() {
-			this.$store.dispatch('city/CLEAR_CITIES')
+		async clear() {
+			await this.$store.dispatch('city/CLEAR_CITIES')
 		},
 
-		findDestinationTo(event) {
+		async findDestinationTo(event) {
 			const value = this.inputValueTo;
 			let payload = {
 				city: this.inputValueFrom,
-				search: value
+				search: value,
+				language: useLocaleCode(this.$i18n)
 			}
-			this.$store.dispatch('city/LOAD_CITY', payload)
+			await this.$store.dispatch('city/LOAD_CITY', payload)
 			this.inputValueTo = value;
 			if (value === "") {
 				this.citiesTo = [];
 			} else {
-				this.citiesTo = this.$store.getters['city/getCities'];
+				this.citiesTo = await this.$store.getters['city/getCities'];
 			}
 		},
 		findDestinationFrom(event) {
@@ -139,7 +138,8 @@ export default {
 			const value = this.inputValueFrom;
 			let payload = {
 				city: this.inputValueTo,
-				search: value
+				search: value,
+				language: useLocaleCode(this.$i18n)
 			}
 			this.$store.dispatch('city/LOAD_CITY', payload)
 			this.inputValueFrom = value;
@@ -182,31 +182,27 @@ export default {
 
 		async getTransfers() {
 
-			await this.$store.dispatch('city/GET_CITY', {city: this.inputValueFrom, start: true})
-			await this.$store.dispatch('city/GET_CITY', {city: this.inputValueTo, start: false})
+			await this.$store.dispatch('city/GET_CITY', {city: this.inputValueFrom, start: true, language: useLocaleCode(this.$i18n)})
+			await this.$store.dispatch('city/GET_CITY', {city: this.inputValueTo, start: false,  language: useLocaleCode(this.$i18n)})
 			const startCity = await this.$store.getters["city/getStartCity"];
 			const endCity = await this.$store.getters["city/getEndCity"];
-			await this.$store.dispatch('transfer/setTransferData', {
+			const payload = {
 				cityFromSlug: startCity.slug,
+				cityToSlug: endCity.slug,
 				inputValueFrom: this.inputValueFrom,
 				inputValueTo: this.inputValueTo,
-				cityToSlug: endCity.slug,
 				return_trip: this.return_trip,
-			});
-
-			let path = `/transfer/${startCity.slug}/${endCity.slug}`;
-			path = this.$i18n.locale === 'tr' ? path : '/' + this.$i18n.locale + path;
+			};
+			await this.$store.dispatch('transfer/setTransferData', payload);
 			await this.$router.push({
-				path: path,
+				path: `${this.$i18n.locale}/transfer/${startCity.slug}/${endCity.slug}`,
 				query: {
 					currency: Cookies.get('currency'),
 					return_trip: this.return_trip,
 				},
 				hash: 'transfers'
 			});
-
-
-			this.$emit('update-cars')
+			await this.$emit('update-cars', payload)
 		},
 
 

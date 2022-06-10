@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Models\City;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -50,10 +51,10 @@ class TransferResource extends JsonResource
         $translation = $resource->endCity->getTranslations();
         return [
             'id' => $resource->id,
-            'direction' => $translation_start['translations']['turkish'] . ' - ' . $translation['translations']['turkish'],
+            'direction' => City::getByLanguage($translation_start['translations']) . ' - ' . City::getByLanguage( $translation['translations']),
             'start_city' => array_merge(['id' => $resource->startCity->id, 'name' => $resource->startCity->name], $translation_start),
             'end_city' => array_merge(['id' => $resource->endCity->id, 'name' => $resource->endCity->name], $translation),
-            'tax' => $resource->tax . '%',
+            'tax' => $resource->company->tax . '%',
             'cancel_time' => $resource->cancel_time,
             'description' => $resource->description,
             'penalty' => $resource->penalty . '%',

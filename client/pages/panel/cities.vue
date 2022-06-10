@@ -156,6 +156,9 @@
 
 <script>
 import HeaderAdmin from "../../components/admin/HeaderAdmin";
+import {getMetaData} from "../../hooks/meta";
+
+
 
 export default {
 	name: "cities",
@@ -166,14 +169,14 @@ export default {
 			loading: true,
 			breadcrumbs: [
 				{
-					text: 'Kontrol paneli',
+					text: this.$t('panel.dashboard'),
 					disabled: false,
-					href: '/panel',
+					href: '/' + this.$i18n.locale + '/panel',
 				},
 				{
-					text: 'Cities',
+					text: this.$t('panel.menu.cities'),
 					disabled: true,
-					href: '/cities',
+					href:'/' + this.$i18n.locale +   '/cities',
 				},
 			],
 			pageTitle: 'Edit cities',
@@ -217,6 +220,16 @@ export default {
 					},
 			totalNumberOfItems: 0,
 			listSize: [10, 25, 50, 100],
+		}
+	},
+
+	async asyncData({$axios, i18n}) {
+		return getMetaData($axios, i18n, i18n.t('panel.menu.cities'), true)
+	},
+	head() {
+		return {
+			title: this.title,
+			meta: this.meta
 		}
 	},
 

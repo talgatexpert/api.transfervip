@@ -4,14 +4,14 @@
 
 		<div class="container" id="transfers">
 			<section class="content-info">
-				<h2 class="content-info__title text-center" v-if="itemsLength.length">{{ $t('search_transfer', {from, to}) }}</h2>
+				<h2 class="content-info__title text-center" v-if="itemsLength">{{ $t('search_transfer', {from, to}) }}</h2>
 
 				<scale-loader :loading="loading"></scale-loader>
 
 				<div v-for="(item, key) in items" v-if="items" :key="`bind_${key}`">
 					<card v-for="(car, key) in item.cars" :car="car" :key="`car_${key}`" :transfer-id="item.id"></card>
 				</div>
-				<h2 class="content-info__title text-center" v-if="!itemsLength.length">{{ $t('not_found_transfers') }}</h2>
+				<h2 class="content-info__title text-center" v-if="!itemsLength">{{ $t('not_found_transfers') }}</h2>
 
 
 			</section>
@@ -25,6 +25,8 @@ import Card from "../components/Card";
 import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 import Cookies from "js-cookie";
 import login from "./login";
+import {getMetaData} from "../hooks/meta";
+import {useLocaleCode} from "../hooks/locale";
 
 export default {
 	name: "transfer",
@@ -32,14 +34,17 @@ export default {
 	beforeCreate() {
 		this.loading = true;
 	},
+
 	data() {
 		return {
+			title: 'Lux elit travel Transfer Company in Turkey',
+			meta: [],
 			from: "",
 			to: "",
 			cars: [],
 			items: [],
 			loading: true,
-			itemsLength: [],
+			itemsLength: 0,
 			color: 'red',
 		}
 	},
@@ -50,30 +55,23 @@ export default {
 			}
 		}
 	},
-	async asyncData({params, query, store, app}) {
-
+	async asyncData({params, query, store, app, $axios, i18n}) {
+		const language = useLocaleCode(i18n);
 		await store.dispatch('transfer/get', {
 			city_from: params.from,
 			city_to: params.to,
 			return_trip: query.return_trip,
-			currency: query.currency
+			currency: query.currency,
+			language
 		});
-		const data = await store.getters['transfer/transfers'];
-		let from = '';
-		let to = '';
-		if (data.items?.length > 0) {
-			if (app.i18n.locale === "tr") {
-				from = data?.items[0]['start_city']['translations']['turkish']
-				to = data.items[0]['end_city']['translations']['turkish']
-			} else if (app.i18n.locale === "ru") {
-				from = data.items[0]['start_city']['translations']['russian']
-				to = data.items[0]['end_city']['translations']['russian']
-			} else if (app.i18n.locale === "en") {
-				from = data.items[0]['start_city']['translations']['english']
-				to = data.items[0]['end_city']['translations']['english']
-			}
-		}
-		return {items: data.items, from, to, loading: false, itemsLength: JSON.parse(JSON.stringify(data.items))}
+		let data = await store.getters['transfer/transfers'];
+		let from = data.from;
+		let to = data.to;
+
+
+
+		const meta = await getMetaData($axios, i18n)
+		return {meta, items: data.items, from, to, loading: false, itemsLength: data.total }
 
 	},
 
@@ -96,13 +94,13 @@ export default {
 
 	methods: {
 
-		async update() {
+		async update(payload) {
 			this.loading = true;
 			this.items = [];
 			await this.$store.dispatch('transfer/get', {
-				city_from: this.$route.params.from,
-				city_to: this.$route.params.to,
-				return_trip: this.$route.query.return_trip,
+				city_from: payload.cityFromSlug,
+				city_to: payload.cityToSlug,
+				return_trip: payload.return_trip,
 				currency: this.$route.query.currency
 			});
 			const data = await this.$store.getters['transfer/transfers'];

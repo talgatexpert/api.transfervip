@@ -62,6 +62,10 @@ class CompanyController extends Controller
     }
 
 
+    public function show(Request $request,  Company $company)
+    {
+        return response(['data' => $company]);
+    }
 
     /**
      * Store a newly created resource in storage.

@@ -65,7 +65,7 @@ export default {
   data() {
     return {
       drawer: true,
-      logout_data: {path: '/panel/logout', title: 'Kapatma', icon: 'mdi-logout'},
+      logout_data: {path:  '/' + this.$i18n.locale + '/panel/logout', title: this.$t('panel.menu.logout'), icon: 'mdi-logout'},
       mini: false,
     }
   },
@@ -80,35 +80,37 @@ export default {
       let items = [];
 
 
-      items.push({path: '/panel/', title: 'Kontrol paneli', icon: 'mdi-home', exact: true})
-      items.push({path: '/panel/account', title: 'Hesabım', icon: 'mdi-account'})
-      items.push({path: '/panel/bookings', title: 'Rezervasyonlar', icon: 'mdi-bus'})
+      items.push({path:  '/' + this.$i18n.locale + '/panel/', title: this.$t('panel.dashboard'), icon: 'mdi-home', exact: true})
+      items.push({path:  '/' + this.$i18n.locale + '/panel/account', title: this.$t('panel.menu.account'), icon: 'mdi-account'})
+      items.push({path:  '/' + this.$i18n.locale + '/panel/bookings', title: this.$t('panel.menu.bookings'), icon: 'mdi-bus'})
 
       if (role === 'client') {
-        items.push({path: '/panel/trips', title: 'Seyahatler', icon: 'mdi-arrow-bottom-right'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/trips', title: 'Seyahatler', icon: 'mdi-arrow-bottom-right'})
       }
-	    console.log(role)
       if (role === 'super_admin') {
-        items.push({path: '/panel/cities', title: 'Şehirler', icon: 'mdi-city'})
-        items.push({path: '/panel/cars', title: 'Araçlar', icon: 'mdi-car'})
-        items.push({path: '/panel/companies', title: 'Şirketler', icon: 'mdi-account-multiple'})
-        items.push({path: '/panel/clients', title: 'Müşteriler', icon: 'mdi-account-group-outline'})
-        items.push({path: '/panel/transfers', title: 'Aktarmalar', icon: 'mdi-car-outline'})
-        items.push({path: '/panel/users', title: 'Kullanıcı', icon: 'mdi-account-outline'})
-	      items.push({path: '/panel/settings', title: 'Sistem Ayarları', icon: 'mdi-account-settings-outline'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/cities', title: this.$t('panel.menu.cities'), icon: 'mdi-city'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/cars', title: this.$t('panel.menu.cars'), icon: 'mdi-car'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/companies', title: this.$t('panel.menu.companies'), icon: 'mdi-account-multiple'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/clients', title: this.$t('panel.menu.clients'), icon: 'mdi-account-group-outline'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/transfers', title: this.$t('panel.menu.transfers'), icon: 'mdi-car-outline'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/users', title: this.$t('panel.menu.users'), icon: 'mdi-account-outline'})
+	      items.push({path:  '/' + this.$i18n.locale + '/panel/settings', title: this.$t('panel.menu.settings'), icon: 'mdi-account-settings-outline'})
 
       }
       if (role === 'admin') {
-        items.push({path: '/panel/cities', title: 'Şehirler', icon: 'mdi-city'})
-        items.push({path: '/panel/clients', title: 'Müşteriler', icon: 'mdi-account-group-outline'})
-        items.push({path: '/panel/cars', title: 'Araçlar', icon: 'mdi-car'})
-        items.push({path: '/panel/transfers', title: 'Aktarmalar', icon: 'mdi-car-outline'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/cities', title: this.$t('panel.menu.cities'), icon: 'mdi-city'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/clients', title: this.$t('panel.menu.clients'), icon: 'mdi-account-group-outline'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/cars', title:this.$t('panel.menu.cars'), icon: 'mdi-car'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/transfers', title: this.$t('panel.menu.transfers'), icon: 'mdi-car-outline'})
       }
       if (role === 'company') {
-        items.push({path: '/panel/cars', title: 'Araçlar', icon: 'mdi-car'})
-        items.push({path: '/panel/transfers', title: 'Aktarmalar', icon: 'mdi-car-outline'})
-        items.push({path: '/panel/clients', title: 'Müşteriler', icon: 'mdi-account-group-outline'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/cars', title: this.$t('panel.menu.cars'), icon: 'mdi-car'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/transfers', title: this.$t('panel.menu.transfers'), icon: 'mdi-car-outline'})
+        items.push({path:  '/' + this.$i18n.locale + '/panel/clients', title: this.$t('panel.menu.clients'), icon: 'mdi-account-group-outline'})
       }
+	    if (role === 'travel') {
+		    items.push({path:  '/' + this.$i18n.locale + '/panel/clients', title: this.$t('panel.menu.clients'), icon: 'mdi-account-group-outline'})
+	    }
 
       return items;
     },
@@ -119,13 +121,8 @@ export default {
 
   },
   methods: {
-    async logout() {
-      await this.$auth.logout({
-        url: 'logout'
-      }).then(async result => {
-        await this.$store.dispatch('CLEAR_ROLE')
-
-      })
+     logout() {
+          this.$emit('logout');
     },
   }
 }

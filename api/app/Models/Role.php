@@ -13,4 +13,26 @@ class Role extends Model
     protected $fillable = [
         'description', 'name', 'permissions'
     ];
+
+    public function scopeCompany($query)
+    {
+        $query->where('name', 'company');
+    }
+    public function scopeAdmin($query)
+    {
+        $query->where('name', 'admin');
+    }
+    public function scopeSuperAdmin($query)
+    {
+        $query->where('name', 'super_admin');
+    }
+    public function scopeTravel($query)
+    {
+        $query->where('name', 'travel');
+    }
+    public function scopeAgency($query)
+    {
+        $query->where('name', 'travel');
+    }
+
 }

@@ -41,7 +41,7 @@
 										color="primary"
 										dark
 										class="mb-2 col-sm-12"
-										to="/panel/bookings/new"
+										:to="`/${$i18n.locale}/panel/bookings/new`"
 								>
 									Yeni rezervasyon
 								</v-btn>
@@ -117,55 +117,46 @@
 
 <script>
 import HeaderAdmin from "../../../components/admin/HeaderAdmin";
+import {getMetaData} from "../../../hooks/meta";
+import {useLocale} from "../../../hooks/locale";
 
 export default {
 	name: "index",
 	components: {HeaderAdmin},
 	layout: "admin",
+	head() {
+		return {
+			title: this.title,
+			meta: this.meta
+		}
+	},
+
+	async asyncData({$axios, i18n}) {
+		const locale = useLocale(i18n);
+		const data = await getMetaData($axios, i18n, i18n.t('panel.menu.bookings'), true);
+		return {language: locale.name_en.toLowerCase(), ...data }
+	},
 	data() {
 		return {
+			title: '',
+
 			loading: true,
+			language: 'turkish',
 			breadcrumbs: [
 				{
-					text: 'Kontrol paneli',
+					text: this.$t('panel.dashboard'),
 					disabled: true,
-					href: '/panel/dashboard',
+					href: '/' + this.$i18n.locale + '/panel/dashboard',
 				},
 				{
-					text: 'Transfers',
+					text: this.$t('panel.menu.bookings'),
 					disabled: true,
-					href: '/bookings',
+					href: '/' + this.$i18n.locale + '/bookings',
 				},
 			],
 			pageTitle: 'Rezervasyon listesi',
 			dialog: false,
 			dialogDelete: false,
-			headers: [
-				{
-					text: '№',
-					align: 'start',
-					sortable: true,
-					value: 'id',
-				},
-				{align: 'center', width: 200, text: 'Address', value: 'address'},
-				{align: 'center', width: 100, text: 'Araç', value: 'car'},
-				// {align: 'center', width: 100, text: 'Fiyat TL', value: 'price'},
-				// {text: 'Komisyon', va100 'tax'},
-				{align: 'center', width: 200, text: 'Döviz kuru ile fiyat', value: 'price_with_currency'},
-				// {align: 'center', wid100200, text: 'Döviz kuru', value: 'currency'},
-				{align: 'center', width: 100, text: 'Uçuş numarası', value: 'flight_number'},
-				{align: 'center', width: 100, text: 'Dönüş yolculuğu', value: 'return_trip'},
-				{align: 'center', width: 100, text: 'Yolcu sayısı', value: 'passengers_number'},
-				{align: 'center', width: 150, text: 'Çocuk koltuğu', value: 'add_child_seat'},
-				{align: 'center', width: 200, text: 'Tarih saat', value: 'started_at'},
-				{align: 'center', width: 200, text: 'dönüş yolculuğu tarih saat ', value: 'return_trip_started_at'},
-				{align: 'center', width: 200, text: 'Dönüş yolculuğu uçuş numarası', value: 'return_trip_flight_number'},
-				{align: 'center', width: 200, text: 'Dönüş yolculuğu adresi', value: 'return_trip_address'},
-				{align: 'center', width: 200, text: 'döviz kuru ile toplam', value: 'total_with_currency'},
-				{align: 'center', width: 200, text: 'Процент с ТС компании', value: 'company_tax_with_currency'},
-				{align: 'center', width: 200, text: 'Процент с Агентства', value: 'agency_tax_with_currency'},
-				{align: 'center', width: 100, text: 'Actions', value: 'actions', sortable: false},
-			],
 			bookings: [],
 			editedIndex: -1,
 			editedItem: {
@@ -224,6 +215,41 @@ export default {
 		formTitle() {
 			return this.editedIndex === -1 ? 'Rezervasyonu ekle' : 'Rezervasyonu düzenle'
 		},
+		headers() {
+			return [
+				{
+					text: '№',
+					align: 'start',
+					sortable: true,
+					value: 'id',
+				},
+				{align: 'center', width: 200, text: 'Address', value: 'address'},
+				{align: 'center', width: 100, text: 'Araç', value: 'car'},
+				{align: 'center', width: 150, text: 'Transfer Nereden', value: 'city_from.' + this.language},
+				{align: 'center', width: 150, text: 'Transfer Nereye', value: 'city_end.' + this.language},
+				// {align: 'center', width: 100, text: 'Fiyat TL', value: 'price'},
+				// {text: 'Komisyon', va100 'tax'},
+				{align: 'center', width: 200, text: 'Döviz kuru ile fiyat', value: 'price_with_currency'},
+				// {align: 'center', wid100200, text: 'Döviz kuru', value: 'currency'},
+				{align: 'center', width: 100, text: 'Uçuş numarası', value: 'flight_number'},
+				{align: 'center', width: 100, text: 'Dönüş yolculuğu', value: 'return_trip'},
+				{align: 'center', width: 100, text: 'Yolcu sayısı', value: 'passengers_number'},
+				{align: 'center', width: 150, text: 'Çocuk koltuğu', value: 'add_child_seat'},
+				{align: 'center', width: 200, text: 'Tarih saat', value: 'started_at'},
+				{align: 'center', width: 200, text: 'dönüş yolculuğu tarih saat ', value: 'return_trip_started_at'},
+				{align: 'center', width: 200, text: 'Dönüş yolculuğu uçuş numarası', value: 'return_trip_flight_number'},
+				{align: 'center', width: 200, text: 'Dönüş yolculuğu adresi', value: 'return_trip_address'},
+				{align: 'center', width: 200, text: 'döviz kuru ile toplam', value: 'total_with_currency'},
+				{align: 'center', width: 200, text: 'Процент с ТС компании', value: 'company_tax_with_currency'},
+				{align: 'center', width: 200, text: 'Процент с Агентства', value: 'agency_tax_with_currency'},
+				{align: 'center', width: 100, text: 'Actions', value: 'actions', sortable: false},
+			]
+		},
+
+		base_route(){
+			return  '?page=1&limit=10&orderby=id&language=' + this.language
+		}
+
 	},
 
 	watch: {
@@ -237,7 +263,7 @@ export default {
 
 
 	async mounted() {
-		await this.$store.dispatch('panel/bookings/GET_BOOKINGS', '?page=1&limit=10&orderby=id&language=turkish');
+		await this.$store.dispatch('panel/bookings/GET_BOOKINGS', this.base_route);
 		this.bookings = await this.$store.getters['panel/bookings/GET_BOOKINGS']
 		this.totalNumberOfItems = await this.$store.getters['panel/bookings/GET_TOTAL'];
 		this.loading = false;
@@ -257,7 +283,7 @@ export default {
 			this.totalNumberOfItems = await this.$store.getters['panel/bookings/GET_TOTAL']
 		},
 		async initialize() {
-			await this.$store.dispatch('panel/bookings/GET_BOOKINGS', '?page=1&limit=10&orderby=id&language=turkish');
+			await this.$store.dispatch('panel/bookings/GET_BOOKINGS', this.base_route);
 			this.bookings = await this.$store.getters['panel/bookings/GET_BOOKINGS']
 			this.totalNumberOfItems = await this.$store.getters['panel/bookings/GET_TOTAL']
 		},
@@ -271,7 +297,7 @@ export default {
 				this.$data.bookings = await this.$store.getters['panel/bookings/GET_BOOKINGS']
 				this.$data.totalNumberOfItems = await this.$store.getters['panel/bookings/GET_TOTAL']
 			} else {
-				await this.$store.dispatch('panel/bookings/GET_BOOKINGS', '?page=1&limit=10&orderby=id&language=turkish');
+				await this.$store.dispatch('panel/bookings/GET_BOOKINGS', this.base_route);
 				this.$data.bookings = await this.$store.getters['panel/bookings/GET_TRANSFERS']
 				this.$data.totalNumberOfItems = await this.$store.getters['panel/bookings/GET_TOTAL']
 			}
@@ -284,7 +310,7 @@ export default {
 			const sortBy = query.sort ?? "ASC";
 			let perPage = query.limit ?? 10;
 
-			return '?limit=' + perPage + '&orderby=' + paginate.sortBy + '&page=' + page + '&sort=' + sortBy + '&language=turkish';
+			return '?limit=' + perPage + '&orderby=' + paginate.sortBy + '&page=' + page + '&sort=' + sortBy + '&language='  + this.language;
 		},
 
 		async fetchData(route = null) {
@@ -297,9 +323,9 @@ export default {
 			this.editedIndex = this.bookings.indexOf(item)
 			this.editedItem = Object.assign({}, item)
 			if (this.editedItem.id) {
-				this.$router.push('/panel/bookings/' + this.editedItem.id + '?from=' + this.editedItem.direction)
+				this.$router.push('/' + this.$i18n.locale + '/panel/bookings/' + this.editedItem.id + '?from=' + this.editedItem.direction)
 			} else {
-				this.$router.push('/panel/bookings/new')
+				this.$router.push('/' + this.$i18n.locale + '/panel/bookings/new')
 			}
 		},
 
@@ -376,7 +402,7 @@ export default {
 				obj.sort = "ASC"
 
 			}
-			obj.language = "turkish"
+			obj.language = this.language
 
 
 			// check if old and new query are the same - VueRouter will not change the route if they are, so probably this is the first page loading

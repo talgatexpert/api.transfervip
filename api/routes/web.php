@@ -23,4 +23,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::get('login', function () {
     return view('welcome');
 })->name('login');
+Route::get('token', function (){
+    return response(['csrf' => csrf_token()]);
+});
 

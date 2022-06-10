@@ -45,7 +45,7 @@ class SettingController extends Controller
 
         $setting->key = $request->get('key');
         if ($request->exists('serialized')) {
-            $setting->value = json_encode($request->get('value'), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $setting->value = json_encode($request->value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             $setting->serialized = 1;
         } else {
             $setting->value = $request->get('value');
@@ -73,12 +73,11 @@ class SettingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $name
      * @return SettingResource
      */
-    public function show($name)
+    public function show(Request $request, string $setting)
     {
-        $setting = Setting::where('key', $name)->first();
+        $setting = Setting::where('key', $setting)->first();
 
         if ($setting) {
             return new SettingResource($setting);
@@ -92,7 +91,7 @@ class SettingController extends Controller
             $image = $request->file('image');
             $fileName = Str::random(18) . '.' . $image->getClientOriginalExtension();
             $image->storeAs('public/images', $fileName);
-            return env('APP_URL') . Storage::url('public/images/' . $fileName);
+            return  Storage::disk('public')->url('public/images/' . $fileName);
         }
         return null;
     }
@@ -101,14 +100,13 @@ class SettingController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
      * @return Response
      */
-    public function update(Request $request, $id): Response|SettingResource
+    public function update(Request $request): Response|SettingResource
     {
         $setting = Setting::where('key', $request->get('key'))->first();
         if (!$setting) {
-            return response(['message' => "Setting doesn't exists"], 404);
+            $setting = new Setting();
         }
         $setting = $this->updateSetting($setting, $request, $this->saveFile($request));
 

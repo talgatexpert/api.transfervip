@@ -14,6 +14,8 @@
       <p class="my-2  text-subtitle-1">Araç tipi: <b>{{ type }}</b></p>
       <p class="my-2  text-subtitle-1">Kişi sayısı: <b>{{ person_quantity }}</b></p>
       <p class="my-2  text-subtitle-1">Bagaj sayısı: <b>{{ baggage_quantity }}</b></p>
+      <p class="my-2  text-subtitle-1">Tax: <b>{{ tax }}</b></p>
+      <p class="my-2  text-subtitle-1">Price with tax: <b>{{ price_with_tax }}</b></p>
       <v-text-field
         :value="price"
         @input="update"
@@ -55,11 +57,13 @@ export default {
     image: String,
     loading: Boolean,
     name: String,
-    price: String,
+    price: String | Number,
+	  price_with_tax: String | Number,
     description: String,
     type: String,
     remove: Function,
     person_quantity: Number,
+	  tax: String | Number,
     baggage_quantity: Number,
   },
 
@@ -68,6 +72,7 @@ export default {
     update(value) {
       this.$emit('changePrice', value)
     },
+
   }
 }
 </script>

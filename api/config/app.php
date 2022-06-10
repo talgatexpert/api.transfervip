@@ -16,6 +16,7 @@ return [
     */
 
     'deploy_secret' => env('APP_DEPLOY_SECRET', 'AUTO_DEPLOY'),
+    'panel' =>  env('APP_ENV') === 'production' ? 'https://'. env('SANCTUM_STATEFUL_DOMAINS', '') . '/login' : 'http://'. env('SANCTUM_STATEFUL_DOMAINS', '') . '/login',
 
     'name' => env('APP_NAME', 'Laravel'),
 

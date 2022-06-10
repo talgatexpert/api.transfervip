@@ -1,6 +1,4 @@
-import Cookies from "js-cookie";
-
-
+import {CITY_URL, TRANSFER_CITIES_URL} from "~/routes/main";
 export const state = () => ({
     cities: [],
     cityFrom: {},
@@ -42,22 +40,6 @@ export const mutations = {
 
 }
 
-/* Encode string to slug */
-function convertToSlug(str) {
-
-    //replace all special characters | symbols with a space
-    str = str.replace(/[`~!@#$%^&*()_\-+=\[\]{};:'"\\|\/,.<>?\s]/g, ' ')
-        .toLowerCase();
-
-    // trim spaces at start and end of string
-    str = str.replace(/^\s+|\s+$/gm, '');
-
-    // replace space with dash/hyphen
-    str = str.replace(/\s+/g, '-');
-    return str;
-    //return str;
-}
-
 const setCity = (commit, payload, data) => {
     if (payload.start)
         commit('SET_START_CITY', data)
@@ -67,29 +49,15 @@ const setCity = (commit, payload, data) => {
 
 export const actions = {
     async LOAD_CITY({commit}, payload) {
-        switch (this.$i18n.locale) {
-            case "tr":
-                await this.$axios.get('transfer/cities?search=' + payload.search + '&orderby=turkish&limit=5&city=' + payload.city).then(result => {
-                    commit('SET_CITIES', result.data.data.cities)
-                }).catch(error => {
-                    commit('SET_ERROR', error)
-                });
-                break
-            case "ru":
-                await this.$axios.get('transfer/cities?search=' + payload.search + '&orderby=russian&limit=10&city=' + payload.city).then(result => {
-                    commit('SET_CITIES', result.data.data.cities)
-                }).catch(error => {
-                    commit('SET_ERROR', error)
-                });
-                break
-            case "en":
-                await this.$axios.get('transfer/cities?search=' + payload.search + '&orderby=english&limit=10&city=' + payload.city).then(result => {
-                    commit('SET_CITIES', result.data.data.cities)
-                }).catch(error => {
-                    commit('SET_ERROR', error)
-                });
-                break
-        }
+        await this.$axios.get(TRANSFER_CITIES_URL + '?search=' + payload?.search + '&orderby=' + payload.language + '&limit=5&city=' + payload.city)
+            .then(({data}) => {
+                if (data.data)
+                    if (data.data.cities)
+                        commit('SET_CITIES', data.data.cities)
+            }).catch(error => {
+                commit('SET_ERROR', error)
+            });
+
     },
     SET_DIRECTION({commit}, payload) {
         commit('SET_DIRECTION', payload);
@@ -106,31 +74,12 @@ export const actions = {
         commit('CLEAR_CITIES', []);
     },
     async GET_CITY({commit}, payload) {
-        switch (this.$i18n.locale) {
-            case "tr":
-                await this.$axios.get(`city/${payload.city}?language=turkish`).then(({data}) => {
-                    setCity(commit, payload,  data.data)
-                }).catch(error => {
-                    commit('SET_ERROR', error)
-                });
-                break
-            case "ru":
-                await this.$axios.get(`city/${payload.city}?language=russian`).then(({data})=> {
-                    setCity(commit, payload, data.data)
-                }).catch(error => {
-                    commit('SET_ERROR', error)
-                });
-                break
-            case "en":
-                await this.$axios.get(`city/${payload.city}?language=english`).then(({data}) => {
-                    setCity(commit, payload,  data.data)
-                }).catch(error => {
-                    commit('SET_ERROR', error)
-                });
-                break
-        }
-
-
+        await this.$axios.get(CITY_URL + payload.city + '?language=' + payload.language).then(({data}) => {
+            if (data.data)
+                setCity(commit, payload, data.data)
+        }).catch(error => {
+            commit('SET_ERROR', error)
+        });
     }
 }
 export const getters = {

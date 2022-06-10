@@ -1,5 +1,8 @@
-module.exports = {
+import panel from "~/language/panel/tr";
+
+export default  {
     header_title: "Dünya çapında 13.000'den fazla destinasyonda <br>  taksi ve transferi bulun",
+    panel: {...panel},
 
     menu: {
         business: "İş için",
@@ -41,11 +44,13 @@ module.exports = {
         fix_price_info: "Nihai maliyeti hemen görüyorsunuz",
     },
     corp: {
-        title: 'Effective business-solutions',
-        subtitle: 'Consolidated management for corporate clients. High-quality services. Streamlining of work.',
-
+        title: 'Seyahat firmaları için ortaklık programı',
+        subtitle: 'Konuklarınız için önceden rehberli turlar rezervasyonu yapın. Konfor basit ve güvenlidir.',
     },
-
+    transport: {
+        title: 'Etkili iş kararları',
+        subtitle: 'Kurumsal müşteriler için konsolide yönetim. Yüksek kaliteli hizmetler. İşin düzene sokulması.',
+    },
 
     how_work: {
         title: "Nasıl çalışır?",

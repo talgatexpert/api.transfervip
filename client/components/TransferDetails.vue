@@ -35,7 +35,7 @@
 
 						<div class="route-details__date">
 							<datepicker class="v-datepicker" :class="errors.started_at ? 'border-red' : ''" :lang="$i18n.locale"
-							            v-model="form.started_at"/>
+							            v-model="form.started_at" :disabled-start-date="{from: null, to: Date.now()}"/>
 
 							<vue-timepicker class="timepicker" format="HH:mm" :minute-interval="5"
 							                v-model="form.started_at_time"></vue-timepicker>
@@ -77,15 +77,17 @@
 						<div class="route-list__end">{{ form.city_from }}</div>
 					</div>
 					<div class="route-details form-group">
-						<label for="hotel">{{ $t('checkout.transfer_details.address') }}</label>
-						<input type="text" v-model="form.return_booking.address" class="form-control form-input" id="hotel">
+						<label for="return_booking_hotel">{{ $t('checkout.transfer_details.address') }}</label>
+						<input type="text" v-model="form.return_booking.address" class="form-control form-input" id="return_booking_hotel">
+						<span class="error-form" v-if="errors.return_booking && errors.return_booking.address">{{ $t('checkout.errors.address') }}</span>
 
-						<label for="flight" class="mt-2 d-block">{{ $t('checkout.transfer_details.flight_number') }}</label>
+						<label for="return_booking_flight" class="mt-2 d-block">{{ $t('checkout.transfer_details.flight_number') }}</label>
 						<input type="text" v-model="form.return_booking.flight_number" placeholder="TCR3835"
-						       class="form-control form-input" id="flight">
+						       class="form-control form-input" id="return_booking_flight">
+						<span class="error-form" v-if="errors.return_booking && errors.return_booking.flight_number">{{ $t('checkout.errors.flight_number') }}</span>
 
 						<div class="route-details__date">
-							<datepicker class="v-datepicker" :lang="$i18n.locale" v-model=" form.return_booking.started_at"/>
+							<datepicker class="v-datepicker" :disabled-start-date="{from: null, to: form.started_at}"  :lang="$i18n.locale" v-model=" form.return_booking.started_at"/>
 
 							<vue-timepicker class="timepicker" format="HH:mm" :minute-interval="5"
 							                v-model="form.return_booking.started_at_time"></vue-timepicker>

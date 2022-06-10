@@ -198,24 +198,35 @@
 <script>
 import HeaderAdmin from "../../components/admin/HeaderAdmin";
 import login from "../login";
+import {getMetaData} from "../../hooks/meta";
 
 export default {
 	name: "users",
 	components: {HeaderAdmin},
 	layout: "admin",
+
+	async asyncData({$axios, i18n}) {
+		return getMetaData($axios, i18n, i18n.t('panel.menu.travels'), true)
+	},
+	head() {
+		return {
+			title: this.title,
+			meta: this.meta
+		}
+	},
 	data() {
 		return {
 			loading: true,
 			breadcrumbs: [
 				{
-					text: 'Kontrol paneli',
+					text: this.$t('panel.dashboard'),
 					disabled: false,
-					href: '/panel',
+					href: '/' + this.$i18n.locale + '/panel',
 				},
 				{
-					text: 'Kullanıcı',
+					text: this.$t('panel.menu.users'),
 					disabled: true,
-					href: '/users',
+					href:'/' + this.$i18n.locale +   '/users',
 				},
 			],
 			change_password: false,

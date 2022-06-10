@@ -28,5 +28,23 @@ class Client extends Authenticatable
         'password',
 
     ];
+    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function getRole() : string
+    {
+        return $this->role->name;
+    }
+
+    public function isTravel() : bool
+    {
+        return $this->role->name === 'travel';
+    }
+    public function isAgency() : bool
+    {
+        return $this->role->name === 'travel';
+    }
 
 }

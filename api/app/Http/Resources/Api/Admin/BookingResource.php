@@ -89,8 +89,8 @@ class BookingResource extends JsonResource
             }
 
             return [
+                'total' => $this->resource->count(),
                 'bookings' => $items,
-                'total' => $this->resource->count()
             ];
         } else {
             $booking = $this->resource;

@@ -19,7 +19,7 @@ class SettingResource extends JsonResource
     {
         return [
             'key' => $this->key,
-            'value' => (int)$this->serialized === 1 ? json_decode($this->value, true): $this->value,
+            'value' => $this->value,
         ];
     }
 }

@@ -37,6 +37,7 @@
 
 <script>
 import HeaderAdmin from "../../components/admin/HeaderAdmin";
+import {getMetaData} from "../../hooks/meta";
 
 export default {
 	name: "index",
@@ -47,12 +48,22 @@ export default {
 			loading: false,
 			breadcrumbs: [
 				{
-					text: 'Dashboard',
+					text: this.$t('panel.menu.panel'),
 					disabled: false,
-					href: '/panel',
+					href: '/' + this.$i18n.locale + '/panel',
 				},
 			],
 		}
+	},
+	head() {
+		return {
+			title: this.title,
+			meta: this.meta
+		}
+	},
+
+	async asyncData({$axios, i18n}) {
+		return getMetaData($axios, i18n, i18n.t('panel.menu.home'), true)
 	},
 
 	async mounted() {

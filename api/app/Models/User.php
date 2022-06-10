@@ -169,6 +169,7 @@ class User extends Authenticatable
             /* TRIPS END */
         ],
     ];
+    const ACTIVE = 1;
 
 
     /**
@@ -218,12 +219,57 @@ class User extends Authenticatable
     public function getRole()
     {
         return $this->role->name;
+    }
 
+    public function isTravel(): bool
+    {
+        return $this->role->name === 'travel';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role->name === 'admin';
+    }
+    public function isAdminOrSuper(): bool
+    {
+        return $this->role->name === 'admin' ||  $this->role->name === 'super_admin';
+    }
+
+    public function scopeAdmin($q)
+    {
+        $admin = Role::admin()->first();
+        return $q->where('role_id', $admin->id)->where('active', User::ACTIVE);
+    }
+    public function scopeSuper($q)
+    {
+        $admin = Role::superAdmin()->first();
+        return $q->where('role_id', $admin->id)->where('active', User::ACTIVE);
+    }
+
+    public function scopeAgency($q)
+    {
+        $admin = Role::agency()->first();
+        return $q->where('role_id', $admin->id)->where('active', User::ACTIVE);
+    }
+    public function scopeCompany($q)
+    {
+        $admin = Role::company()->first();
+        return $q->where('role_id', $admin->id)->where('active', User::ACTIVE);
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role->name === 'super_admin';
+    }
+
+    public function isCompany()
+    {
+        return $this->role->name === 'company';
     }
 
     public function getPermissions()
     {
-       return json_decode($this->role->permissions, true);
+        return json_decode($this->role->permissions, true);
     }
 
     public function setRole(string|int $role_id)
@@ -232,7 +278,7 @@ class User extends Authenticatable
     }
 
 
-    public function setActive(bool $val)
+    public function setActive(bool $val = true)
     {
         $this->active = $val ? 1 : 0;
     }

@@ -7,7 +7,7 @@
 			<div class="payments">
 				<div class="radio-custom">
 					<div class="d-flex justify-content-between align-items-center">
-						<div class="radio-custom__flex">
+						<div class="radio-custom radio-custom__flex">
 							<input type="radio" @input="changePayment" v-model="paymentMethod" value="card" id="card_website"
 							       name="radio-group">
 							<label for="card_website"></label>

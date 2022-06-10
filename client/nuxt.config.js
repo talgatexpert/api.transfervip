@@ -1,7 +1,9 @@
+import {API_URL, DOMAIN_URL} from "./routes/main";
+
 export default {
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
-        title: "Transfers",
+        title: "Lux Elit Travel Transfers",
         htmlAttrs: {
             lang: "en",
         },
@@ -26,6 +28,7 @@ export default {
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
     plugins: [
         '~/plugins/vue-gates',
+        '~/plugins/axios.js'
     ],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
@@ -46,6 +49,10 @@ export default {
                 components: {default: resolve(__dirname, 'pages/transfer')}
             })
             routes.push({
+                path: "/tr/transfer/:from/:to",
+                components: {default: resolve(__dirname, 'pages/transfer')}
+            })
+            routes.push({
                 path: "/ru/transfer/:from/:to",
                 components: {default: resolve(__dirname, 'pages/transfer')}
             })
@@ -57,6 +64,10 @@ export default {
 
                 {
                     path: "/checkout",
+                    components: {default: resolve(__dirname, 'pages/checkout')}
+                },
+                {
+                    path: "/tr/checkout",
                     components: {default: resolve(__dirname, 'pages/checkout')}
                 },
                 {
@@ -78,6 +89,8 @@ export default {
     modules: [
         // https://go.nuxtjs.dev/bootstrap
         "bootstrap-vue/nuxt",
+        ['cookie-universal-nuxt'],
+
         [
             "@nuxtjs/i18n",
             {
@@ -88,6 +101,7 @@ export default {
                         iso: "tr",
                         file: "tr",
                         icon: 'flag-tr.svg',
+                        name_en: 'Turkish',
                     },
                     {
                         name: "English",
@@ -95,6 +109,8 @@ export default {
                         iso: "en",
                         file: "en",
                         icon: 'flag-en.svg',
+                        name_en: 'English',
+
 
                     },
                     {
@@ -103,14 +119,18 @@ export default {
                         iso: "ru",
                         file: "ru",
                         icon: 'flag-ru.svg',
+                        name_en: 'Russian',
+
 
                     },
                 ],
                 langDir: "language/",
                 defaultLocale: "tr",
+                seo: true,
                 vueI18n: {
                     fallbackLocale: "en",
                 },
+                strategy: 'prefix',
                 detectBrowserLanguage: {
                     useCookie: true,
                     alwaysRedirect: true
@@ -122,7 +142,7 @@ export default {
         '@nuxtjs/recaptcha',
     ],
     axios: {
-        baseURL: 'http://localhost:8000/api',
+        baseURL: API_URL,
         credentials: true,
 
     },
@@ -137,10 +157,10 @@ export default {
 
             laravelSanctum: {
                 provider: 'laravel/sanctum',
-                url: 'http://localhost:8000',
+                url: DOMAIN_URL,
                 endpoints: {
                     user: {
-                        url: 'http://localhost:8000/api/panel/user'
+                        url: API_URL + '/panel/user'
                     }
                 },
                 token: {
@@ -155,16 +175,15 @@ export default {
         redirect: {
             home: '/panel/',
         },
-        plugins: ['@/plugins/auth-lang-redirect.js'],
-
+        plugins: ['@/plugins/auth.js'],
     },
 
     image: {
         domains: [
-            'localhost:8000'
+            DOMAIN_URL
         ],
         alias: {
-            image_path: 'http://localhost:8000'
+            image_path: DOMAIN_URL
         }
     },
 

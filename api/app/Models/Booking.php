@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\TransferBookedEvent;
 use App\Services\CurrencyConverterService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,13 @@ class Booking extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'company_id',
+        'company_tax',
+        'agency_tax',
+        'price_one_trip',
+        'client_id',
+        'pay_type',
+        'amount',
         'add_child_seat',
         'address',
         'step',
@@ -29,6 +37,7 @@ class Booking extends Model
         'return_trip',
         'transfer_id',
         'currency',
+        'client_confirmed'
     ];
     protected $casts = [
 
@@ -84,6 +93,8 @@ class Booking extends Model
     public function setClientConfirmed()
     {
         $this->client_confirmed = self::ACCEPTED;
+        $this->save();
+        event(new TransferBookedEvent($this));
     }
 
     public function getPrice()
@@ -98,22 +109,37 @@ class Booking extends Model
         return (new  CurrencyConverterService())->convert($price, $currency);
     }
 
-    public function getTaxes(): array
+    protected function getComanyTax()
     {
-        $price = $this->getPrice();
         $agency_tax = null;
         $company_tax = null;
-
-
         if ($this->company?->user?->getRole() == 'travel') {
             $agency_tax = $this->company->tax;
         }
         if ($this->transfer?->user?->getRole() == 'company') {
             $company_tax = $this->transfer->user->company->tax;
         }
+        return [$agency_tax, $company_tax];
+    }
+
+    public function setParentId($id)
+    {
+        $this->booking_id = $id;
+        $this->save();
+    }
+
+    public function getTaxes(): array
+    {
+        $price = $this->getPrice();
+
+        [$agency_tax, $company_tax] = $this->getComanyTax();
 
 
-        $booking_without_tax_price = $this->convert($price->price, $this->currency);
+        if ((int)$this->return_trip)
+            $booking_without_tax_price = $this->convert($this->amount / 2, $this->currency);
+        else
+            $booking_without_tax_price = $this->convert($this->amount, $this->currency);
+
         $data['booking_without_tax_price'] = $booking_without_tax_price;
         $data['company_tax'] = '-';
         $data['agency_tax'] = '-';
@@ -141,11 +167,10 @@ class Booking extends Model
         $return_trip = $this->return_trip;
         $booking_accepted = $this->booking_accepted;
 
-        
 
-        $one_trip = ceil($this->amount / 2 + ($taxes_and_prices['company_tax'] !== '-' ? $taxes_and_prices['company_tax'] : 0)  + ($taxes_and_prices['agency_tax'] !== '-' ? $taxes_and_prices['agency_tax'] : 0));
-        $amount   = ceil($this->amount  +    ($taxes_and_prices['company_tax'] !== '-' ? $taxes_and_prices['company_tax'] : 0)  + ($taxes_and_prices['agency_tax'] !== '-' ? $taxes_and_prices['agency_tax'] : 0));
-        $price    = ceil($price  +           ($taxes_and_prices['company_tax'] !== '-' ? $taxes_and_prices['company_tax'] : 0)  + ($taxes_and_prices['agency_tax'] !== '-' ? $taxes_and_prices['agency_tax'] : 0));
+        $one_trip = ceil($this->amount / 2 + ($taxes_and_prices['company_tax'] !== '-' ? $taxes_and_prices['company_tax'] : 0) + ($taxes_and_prices['agency_tax'] !== '-' ? $taxes_and_prices['agency_tax'] : 0));
+        $amount = ceil($this->amount + ($taxes_and_prices['company_tax'] !== '-' ? $taxes_and_prices['company_tax'] : 0) + ($taxes_and_prices['agency_tax'] !== '-' ? $taxes_and_prices['agency_tax'] : 0));
+        $price = ceil($price + ($taxes_and_prices['company_tax'] !== '-' ? $taxes_and_prices['company_tax'] : 0) + ($taxes_and_prices['agency_tax'] !== '-' ? $taxes_and_prices['agency_tax'] : 0));
 
         if ($booking_accepted && $return_trip) {
 
@@ -159,7 +184,7 @@ class Booking extends Model
             ];
         } elseif (!$booking_accepted && !$return_trip) {
             return [
-                'one_trip' =>$price,
+                'one_trip' => $price,
                 'one_trip_with_currency' => $price . ' ' . $this->currency,
                 'return_trip' => '',
                 'return_trip_with_currency' => '',
@@ -198,7 +223,10 @@ class Booking extends Model
 
     public function scopeWhereNotAccepted($query)
     {
-        $query->where('client_confirmed', self::ACCEPTED)->whereNull('booking_id')->where('booking_accepted', self::NOT_ACCEPTED)->orWhereNull('booking_accepted')->where('client_confirmed', self::ACCEPTED)->whereNull('booking_id')->where('booking_accepted', self::NOT_ACCEPTED);
+        $user = auth()->user();
+        $query->join('transfers', 'transfers.id', '=', 'bookings.transfer_id')->where(function ($q) use ($user) {
+            return $q->where('transfers.user_id', $user->id)->orWhere('transfers.company_id', $user?->company?->id);
+        })->whereNull('bookings.booking_id')->where('client_confirmed', self::ACCEPTED)->whereNull('booking_id')->where('booking_accepted', self::NOT_ACCEPTED)->orWhereNull('booking_accepted')->where('client_confirmed', self::ACCEPTED)->whereNull('booking_id')->where('booking_accepted', self::NOT_ACCEPTED);
     }
 
     public function setBookingAmount()
@@ -229,18 +257,25 @@ class Booking extends Model
         $this->client_confirmed = self::ACCEPTED;
         $this->step = 'finish';
         $this->save();
+        event(new TransferBookedEvent($this));
+
 
     }
 
-    public function setStartedDate($date, $time)
+    public function setStartedDate($date, $time, $admin = false)
     {
         if (is_array($time)) {
             $time = $time['HH'] . ":" . $time['mm'];
         }
-        $date = trim(preg_replace('/[^0-9\s+:.]/', '', $date));
-        $time = trim(preg_replace('/[^0-9\s+:.]/', '', $time));
 
-        $this->started_at = $date && $time ? Carbon::createFromFormat('d.m.Y H:m', $date . ' ' . $time)->format('Y-d-m H:m:i') : null;
+
+        if ($admin)
+            $this->started_at = $date && $time ? Carbon::createFromFormat('Y-m-d H:m', $date . ' ' . $time)->format('Y-d-m H:m:i') : null;
+        else {
+            $date = trim(preg_replace('/[^0-9\s+:.]/', '', $date));
+            $time = trim(preg_replace('/[^0-9\s+:.]/', '', $time));
+            $this->started_at = $date && $time ? Carbon::createFromFormat('d.m.Y H:m', $date . ' ' . $time)->format('Y-d-m H:m:i') : null;
+        }
         $this->save();
 
     }

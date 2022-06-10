@@ -22,14 +22,18 @@ class TransferController extends Controller
         $language = $request->get('language') ?? 'turkish';
         $currency = $request->get('currency') ?? null;
 
-        if (is_null($cityFrom))
+
+        if (!$cityFrom)
             return response(['message' => 'City from not found', 'success' => false,], 404);
-        elseif (is_null($cityTo))
+        elseif (!$cityTo)
             return response(['message' => 'City from not found', 'success' => false,], 404);
 
         $transfers = TransferService::find($cityFrom->id, $cityTo->id);
 
-        return new TransferResource($transfers, );
+        return (new TransferResource($transfers))->additional([
+            'from' => isset($cityFrom->getTranslations()['translations'][$language]) ? $cityFrom->getTranslations()['translations'][$language] : $cityFrom->name,
+            'to' => isset($cityTo->getTranslations()['translations'][$language]) ? $cityTo->getTranslations()['translations'][$language] : $cityTo->name,
+        ]);
 
     }
 
