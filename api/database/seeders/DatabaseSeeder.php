@@ -21,9 +21,9 @@ class DatabaseSeeder extends Seeder
         SettingSeeder::class,
         RoleSeeder::class,
         UserSeeder::class,
-        CompanySeeder::class,
-        CitySeeder::class,
-        CarSeeder::class,
+//        CompanySeeder::class,
+//        CitySeeder::class,
+//        CarSeeder::class,
 //        TransferSeeder::class,
     ];
     public array $productionSeeders = [
