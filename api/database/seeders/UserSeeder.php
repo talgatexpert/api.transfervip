@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
         $user = new User();
         $user->name = config('auth.super_admin.name');
         $user->email = config('auth.super_admin.email');
-        $user->password = config('auth.super_admin.password');
+        $user->password = bcrypt(config('auth.super_admin.password'));
         $user->role_id = config('auth.super_admin.role_id');
         $user->setActive();
         $user->save();

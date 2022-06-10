@@ -128,7 +128,7 @@ return [
     'super_admin' => [
         'name' => env('SUPER_ADMIN_NAME', 'Fatih Celik'),
         'email' => env('SUPER_ADMIN_EMAIL', 'admin@vitotransfer.ru'),
-        'password' => bcrypt(env('SUPER_ADMIN_PASSWORD', '123')),
+        'password' => env('SUPER_ADMIN_PASSWORD', '123456'),
         'role_id' => User::ROLES['super_admin'],
     ]
 
