@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
 
     /*
@@ -74,10 +76,10 @@ return [
             'model' => App\Models\User::class,
         ],
 
-         'clients' => [
-             'driver' => 'eloquent',
-             'model' =>  \App\Models\Client::class,
-         ],
+        'clients' => [
+            'driver' => 'eloquent',
+            'model' => \App\Models\Client::class,
+        ],
     ],
 
     /*
@@ -122,5 +124,12 @@ return [
     */
 
     'password_timeout' => 10800,
+
+    'super_admin' => [
+        'name' => env('SUPER_ADMIN_NAME', 'Fatih Celik'),
+        'email' => env('SUPER_ADMIN_EMAIL', 'admin@vitotransfer.ru'),
+        'password' => bcrypt(env('SUPER_ADMIN_PASSWORD', '123')),
+        'role_id' => User::ROLES['super_admin'],
+    ]
 
 ];
