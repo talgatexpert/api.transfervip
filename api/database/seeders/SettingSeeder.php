@@ -19,29 +19,24 @@ class SettingSeeder extends Seeder
     {
         Setting::create([
             'key' => 'meta',
-            'value' => json_encode([
-                [
-                    'name' => 'Turkish',
-                    'meta_description' => 'Dünya çapında havaalanı, otel veya tren istasyonundan çevrimiçi taksi ve transferleri bulun ve rezervasyon yapın. Beat fix fiyatına, yüksek kaliteli hizmetlere ve farklı tipteki araçlara erişin.',
-                    'meta_title' => env('APP_NAME') . '| dünya çapında konforlu ve karlı transferler. Havaalanından havaalanına konforlu arabalarla seyahat edin',
-                    'meta_keyword' => 'transfer,Antalya, Türkiye',
-                ],
-                [
-                    'name' => 'Russian',
-                    'meta_description' => 'Найдите и закажите онлайн такси и трансфер из аэропорта, отеля или железнодорожного вокзала по всему миру. Получите доступ к лучшей фиксированной цене, высококачественным услугам и транспортным средствам различных типов.',
-                    'meta_title' => env('APP_NAME') . '|  удобные и выгодные переводы по всему миру. Путешествуйте из аэропорта в аэропорт на комфортабельных автомобилях',
-                    'meta_keyword' => 'трансфер,Анталья, Турция',
-                ],
-                [
-                    'name' => 'English',
-                    'meta_description' => 'Find and book online taxi & transfers from the airport, hotel or railway station worldwide. Get access to the best fix prices, high-quality services, and vehicles of different types.',
-                    'meta_title' => env('APP_NAME') . '| comfortable and profitable transfers worldwide. Travel from the airport to the airport in comfortable cars',
-                    'meta_keyword' => 'transfer,Antalya, Turkey',
-                ],
-            ],
-                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-            ),
+            'value' => '[{"name":"Turkish","meta_description":"Компания Травел","meta_title":"Компания Травел","meta_keyword":"путешествия"},{"name":"Russian","meta_description":"путешествия, аренда машин в турции лучшая компания","meta_title":"Поиск трансферов в Турции","meta_keyword":"путешествия"},{"name":"English","meta_description":"travel company","meta_title":"Lux find Cars In Turkey","meta_keyword":"travel"}]',
             'serialized' => 1,
         ]);
+        Setting::create([
+            'key' => 'site_info',
+            'value' => '{"name":"Lux Elit Travels","address":"Liman Mah. 7.Sok.Kösem Apt. №22/3","email":"villadom1@gmai.com","maps":"https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12770.305088710937!2d30.6189308!3d36.8526229!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x7c1e1929663c7e7a!2zVmlsbGEgRG9tIEVtbGFrIFJlYWwgRXN0YXRlINCd0LXQtNCy0LjQttC40LzQvtGB0YLRjCBMVEQu!5e0!3m2!1sru!2str!4v1649252403262!5m2!1sru!2str","country":"Turkey","city":"Antalya","instagram":"https://www.instagram.com/luxelittravel/","facebook":"https://www.facebook.com/LuxElitTravel/","date":"2012"}',
+            'serialized' => 1,
+        ]);
+        Setting::create([
+            'key' => 'name',
+            'value' => "Lux Elit Travel",
+            'serialized' => 0,
+        ]);
+        Setting::create([
+            'key' => 'site_name',
+            'value' => "Lux Elit Travel",
+            'serialized' => 0,
+        ]);
+
     }
 }
