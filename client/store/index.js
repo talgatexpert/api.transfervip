@@ -87,12 +87,12 @@ export const actions = {
         commit('SET_SOCIALS', [
             {
                 name: "Instagram",
-                link:  info.instagram ?? "https://instagram.com",
+                link:  info?.instagram ?? "https://instagram.com",
                 logo: "img/icons/instagram.svg",
             },
             {
                 name: "Facebook",
-                link: info.facebook ?? "https://facebook.com",
+                link: info?.facebook ?? "https://facebook.com",
                 logo: "img/icons/facebook.svg",
             },
         ])
