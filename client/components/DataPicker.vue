@@ -197,7 +197,7 @@ export default {
 			await this.$router.push({
 				path: `/${this.$i18n.locale}/transfer/${startCity.slug}/${endCity.slug}`,
 				query: {
-					currency: Cookies.get('currency'),
+					currency: this.$cookies.get('currency'),
 					return_trip: this.return_trip,
 				},
 				hash: 'transfers'
