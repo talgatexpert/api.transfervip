@@ -10,6 +10,7 @@ jobs:
     outputs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix  }}
     steps:
+
       - uses: actions/checkout@v2
 
       - name: Configure PHP 8.1
@@ -18,9 +19,10 @@ jobs:
         with:
           php-version: 8.1
           extensions: bcmath,xml,fpm,mysql,zip,intl,ldap,gd,cli,bz2,curl,mbstring,PDO,opcache,soap,cgi,json
-        run: |
-          cd api
+
+
       - name: Install Composer dependencies
+        working-directory: api
         run: composer install --no-dev --no-interaction --prefer-dist
       - name: Create deployment artifact
         env:
