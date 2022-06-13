@@ -76,6 +76,112 @@ jobs:
             mkdir -p "${{ matrix.server.path }}/releases"
             mkdir -p "${{ matrix.server.path }}/releases/${{ github.sha }}"
             tar xzf ${{ matrix.server.path }}/artifacts/api.${{ github.sha }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ github.sha }}"
+            chmod -R 0777 ${{ matrix.server.path }}/storage
+  run-before-hook:
+    name: "${{ matrix.server.name }}: Before hook"
+    runs-on: ubuntu-latest
+    needs: [create-deployment-artifacts, prepare-release-on-server]
+    strategy:
+      matrix:
+        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
+    steps:
+      - name: Run before hook
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA: ${{ github.sha }}
+        RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
+        ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
+        STORAGE_PATH: ${{ matrix.server.path }}/storage
+        BASE_PATH: ${{ matrix.server.path }}
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,STORAGE_PATH,BASE_PATH
+        script: |
+          ${{ matrix.server.beforeHooks }}
+
+  activate-release:
+    name: "${{ matrix.server.name }}: Activate release"
+    runs-on: ubuntu-latest
+    needs: [create-deployment-artifacts, prepare-release-on-server,run-before-hook]
+    strategy:
+      matrix:
+        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
+    steps:
+      - name: Run before hook
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA: ${{ github.sha }}
+        RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
+        ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
+        STORAGE_PATH: ${{ matrix.server.path }}/storage
+        BASE_PATH: ${{ matrix.server.path }}
+        LARAVEL_ENV: ${{ secrets.LARAVEL_ENV }}
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,STORAGE_PATH,BASE_PATH,LARAVEL_ENV
+        script: |
+          printf "%s" "$LARAVEL_ENV" > "$BASE_PATH/.env"
+          ln -s -n -f "$BASE_PATH/.env" $RELEASE_PATH
+          ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
+          service php8.1-fpm reload
+          cd $BASE_PATH
+          php artisan migrate --force
+
+
+  run-after-hook:
+    name: "${{ matrix.server.name }}: After hook"
+    runs-on: ubuntu-latest
+    needs: [create-deployment-artifacts, prepare-release-on-server,run-before-hook,activate-release]
+    strategy:
+      matrix:
+        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
+    steps:
+      - name: Run before hook
+      uses: appleboy/ssh-action@master
+      env:
+        GITHUB_SHA: ${{ github.sha }}
+        RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
+        ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
+        STORAGE_PATH: ${{ matrix.server.path }}/storage
+        BASE_PATH: ${{ matrix.server.path }}
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,STORAGE_PATH,BASE_PATH
+        script: |
+          ${{ matrix.server.afterHooks }}
+
+
+  clean-up:
+    name: "${{ matrix.server.name }}: Run clean up"
+    runs-on: ubuntu-latest
+    needs: [create-deployment-artifacts, prepare-release-on-server,run-before-hook,activate-release, run-after-hook]
+    strategy:
+      matrix:
+        server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
+    steps:
+      - name: Run before hook
+      uses: appleboy/ssh-action@master
+      env:
+        ARTIFACTS_PATH: ${{ matrix.server.path }}/artifacts/
+        RELEASES_PATH: ${{ matrix.server.path }}/releases/
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        envs: ARTIFACTS_PATH,RELEASES_PATH
+        script: |
+          cd $RELEASES_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
+          cd $ARTIFACTS_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
 
 
 #  build:
