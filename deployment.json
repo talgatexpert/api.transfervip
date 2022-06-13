@@ -2,7 +2,7 @@
   {
     "name": "server",
     "ip": "188.225.38.112",
-    "username": "",
+    "username": "lux",
     "password": "",
     "port": "22",
     "beforeHooks": "",
