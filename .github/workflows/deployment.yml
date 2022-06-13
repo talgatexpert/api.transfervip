@@ -73,8 +73,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           envs: GITHUB_SHA
           script: |
-            mkdir -p "${{ matrix.server.path }}/releases/${ GITHUB_SHA }"
-            tar xzf {{ matrix.server.path }}/artifacts/api.${ GITHUB_SHA }.tar.gz -C "${{ matrix.server.path }}/releases/${ GITHUB_SHA }"
+            mkdir -p "${{ matrix.server.path }}/releases"
+            mkdir -p "${{ matrix.server.path }}/releases/${{ GITHUB_SHA }}"
+            tar xzf {{ matrix.server.path }}/artifacts/api.${{ GITHUB_SHA }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ GITHUB_SHA }}"
 
 
 #  build:
