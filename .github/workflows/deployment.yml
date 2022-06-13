@@ -75,7 +75,7 @@ jobs:
             mkdir -p "${{ matrix.server.path }}/releases"
             mkdir -p "${{ matrix.server.path }}/releases/${{ github.sha }}"
             tar xzf ${{ matrix.server.path }}/artifacts/api.${{ github.sha }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ github.sha }}"
-            chmod -R 0777 ${{ matrix.server.path }}/storage
+#            chmod -R 0777 ${{ matrix.server.path }}/storage
   run-before-hook:
     name: "${{ matrix.server.name }}: Before hook"
     runs-on: ubuntu-latest
