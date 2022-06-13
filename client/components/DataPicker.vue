@@ -195,7 +195,7 @@ export default {
 			};
 			await this.$store.dispatch('transfer/setTransferData', payload);
 			await this.$router.push({
-				path: `${this.$i18n.locale}/transfer/${startCity.slug}/${endCity.slug}`,
+				path: `/${this.$i18n.locale}/transfer/${startCity.slug}/${endCity.slug}`,
 				query: {
 					currency: Cookies.get('currency'),
 					return_trip: this.return_trip,
