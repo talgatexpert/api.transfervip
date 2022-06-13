@@ -104,7 +104,7 @@ jobs:
   activate-release:
     name: "${{ matrix.server.name }}: Activate release"
     runs-on: ubuntu-latest
-    needs: [create-deployment-artifacts, prepare-release-on-server,run-before-hook]
+    needs: [create-deployment-artifacts, prepare-release-on-server]
     strategy:
       matrix:
         server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
@@ -136,7 +136,7 @@ jobs:
   run-after-hook:
     name: "${{ matrix.server.name }}: After hook"
     runs-on: ubuntu-latest
-    needs: [create-deployment-artifacts, prepare-release-on-server,run-before-hook,activate-release]
+    needs: [create-deployment-artifacts, prepare-release-on-server,activate-release]
     strategy:
       matrix:
         server: ${{ fromJson(needs.create-deployment-artifacts.outputs.deployment-matrix) }}
