@@ -16,30 +16,46 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-      Role::create([
-          'description' => 'Sistem Yönetici',
-          'name' => 'super_admin',
-          'permissions' => json_encode(User::ABILITIES['SUPER_ADMIN']),
-      ]);
-        Role::create([
-            'description' => 'Yönetici',
-            'name' => 'admin',
-            'permissions' => json_encode(User::ABILITIES['ADMIN_ABILITIES']),
-        ]);
-        Role::create([
-            'description' => 'Müşteri',
-            'name' => 'client',
-            'permissions' => json_encode(User::ABILITIES['CLIENT_ABILITIES']),
-        ]);
-        Role::create([
-            'description' => 'Transfer Şirket',
-            'name' => 'company',
-            'permissions' => json_encode(User::ABILITIES['COMPANY_ABILITIES']),
-        ]);
-        Role::create([
-            'description' => 'Seyahat Şirketi',
-            'name' => 'travel',
-            'permissions' => json_encode(User::ABILITIES['TRAVEL_ABILITIES']),
-        ]);
+        $role = Role::where('name', 'super_admin')->first();
+        if (!$role) {
+            Role::create([
+                'description' => 'Sistem Yönetici',
+                'name' => 'super_admin',
+                'permissions' => json_encode(User::ABILITIES['SUPER_ADMIN']),
+            ]);
+        }
+        $role = Role::where('name', 'admin')->first();
+        if (!$role) {
+            Role::create([
+                'description' => 'Yönetici',
+                'name' => 'admin',
+                'permissions' => json_encode(User::ABILITIES['ADMIN_ABILITIES']),
+            ]);
+        }
+        $role = Role::where('name', 'client')->first();
+        if (!$role) {
+            Role::create([
+                'description' => 'Müşteri',
+                'name' => 'client',
+                'permissions' => json_encode(User::ABILITIES['CLIENT_ABILITIES']),
+            ]);
+        }
+        $role = Role::where('name', 'company')->first();
+        if (!$role) {
+
+            Role::create([
+                'description' => 'Transfer Şirket',
+                'name' => 'company',
+                'permissions' => json_encode(User::ABILITIES['COMPANY_ABILITIES']),
+            ]);
+        }
+        $role = Role::where('name', 'travel')->first();
+        if (!$role) {
+            Role::create([
+                'description' => 'Seyahat Şirketi',
+                'name' => 'travel',
+                'permissions' => json_encode(User::ABILITIES['TRAVEL_ABILITIES']),
+            ]);
+        }
     }
 }

@@ -15,14 +15,16 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $user = new User();
-        $user->name = config('auth.super_admin.name');
-        $user->email = config('auth.super_admin.email');
-        $user->password = bcrypt(config('auth.super_admin.password'));
-        $user->role_id = config('auth.super_admin.role_id');
-        $user->setActive();
-        $user->save();
+        $user = User::where('email', config('auth.super_admin.email'))->first();
+        if (!$user) {
+            $user = new User();
+            $user->name = config('auth.super_admin.name');
+            $user->email = config('auth.super_admin.email');
+            $user->password = bcrypt(config('auth.super_admin.password'));
+            $user->role_id = config('auth.super_admin.role_id');
+            $user->setActive();
+            $user->save();
 //        User::factory()->count(50)->create();
-
+        }
     }
 }

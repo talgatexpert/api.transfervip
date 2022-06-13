@@ -32,8 +32,6 @@ class DatabaseSeeder extends Seeder
         UserSeeder::class,
         CitySeeder::class,
 
-
-
     ];
 
     public function run()

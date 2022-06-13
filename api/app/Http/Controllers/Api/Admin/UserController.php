@@ -181,18 +181,23 @@ class UserController extends Controller
 
     public function update(Request $request, User $user): UserResource
     {
-        $request->validate([
+        $rules = [
             'name' => ['required'],
             'email' => ['email', Rule::unique('users')->ignore($user->id)],
             'role_id' => 'required',
             'active' => 'required',
-        ]);
+        ];
+        if ($request->password)
+            $rules += ['password' => 'required'];
+        $request->validate($rules);
         $user->update([
             'name' => $request->name,
             'email' => $request->email
         ]);
         $user->setActive($request->has('active'));
         $user->setRole($request->role_id);
+        if ($request->password)
+            $user->setPassword($request->password);
         $user->save();
         return $this->prepareResource($request);
     }

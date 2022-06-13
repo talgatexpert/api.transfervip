@@ -54,7 +54,7 @@ class TransferResource extends JsonResource
             'direction' => City::getByLanguage($translation_start['translations']) . ' - ' . City::getByLanguage( $translation['translations']),
             'start_city' => array_merge(['id' => $resource->startCity->id, 'name' => $resource->startCity->name], $translation_start),
             'end_city' => array_merge(['id' => $resource->endCity->id, 'name' => $resource->endCity->name], $translation),
-            'tax' => $resource->company->tax . '%',
+            'tax' => $resource?->company?->tax . '%',
             'cancel_time' => $resource->cancel_time,
             'description' => $resource->description,
             'penalty' => $resource->penalty . '%',

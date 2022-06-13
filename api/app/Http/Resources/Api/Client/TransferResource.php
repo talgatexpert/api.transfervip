@@ -78,7 +78,7 @@ class TransferResource extends JsonResource
         foreach ($cars as $car) {
             $price = $car->getCarPrice(false, $car, $resource->id, $currency, $converterService);
 
-            $price = request('return_trip') === 'true' ? $price * 2 : $price;
+            $price = request('return_trip') === 'true' ? $price['price'] * 2 : $price['price'];
             $result[] = [
                 'id' => $car->id,
                 'name' => $car->name,

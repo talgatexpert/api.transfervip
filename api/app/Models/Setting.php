@@ -31,7 +31,7 @@ class Setting extends Model
     }
     public function scopeSiteInfo($q)
     {
-        return $q->where('key', 'site_inf');
+        return $q->where('key', 'site_info');
     }
     public function scopeLogo($q)
     {
