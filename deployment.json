@@ -1,7 +1,7 @@
 [
   {
-    "name": "server-1",
-    "ip": "",
+    "name": "server",
+    "ip": "188.225.38.112",
     "username": "",
     "password": "",
     "port": "22",
