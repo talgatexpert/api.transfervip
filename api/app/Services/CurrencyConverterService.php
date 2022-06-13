@@ -17,8 +17,8 @@ class CurrencyConverterService
     {
         try {
 
-            $url = 'https://api.apilayer.com/fixer/latest?base=' . env('APP_BASE_CURRENCY', 'TRY') . '&symbols=' . rtrim(implode(',', $convert), ',');
-            $response = Http::withHeaders(['apikey' => env('FIXER_API_KEY')])->get($url);
+            $url = 'https://api.apilayer.com/fixer/latest?base=' . config('app.base_currency') . '&symbols=' . rtrim(implode(',', $convert), ',');
+            $response = Http::withHeaders(['apikey' => config('app.fixer_api_key')])->get($url);
             $result = $response->object();
             if ($result->success === true) {
                 Cache::put('currency_' . $convert[0], json_encode($result), 600);

@@ -16,6 +16,8 @@ return [
     */
 
     'deploy_secret' => env('APP_DEPLOY_SECRET', 'AUTO_DEPLOY'),
+    'base_currency' => env('APP_BASE_CURRENCY', 'TRY'),
+    'fixer_api_key' => env('FIXER_API_KEY', null),
     'panel' =>  env('APP_ENV') === 'production' ? 'https://'. env('SANCTUM_STATEFUL_DOMAINS', '') . '/login' : 'http://'. env('SANCTUM_STATEFUL_DOMAINS', '') . '/login',
 
     'name' => env('APP_NAME', 'Laravel'),
