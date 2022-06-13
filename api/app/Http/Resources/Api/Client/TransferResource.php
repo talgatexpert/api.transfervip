@@ -87,7 +87,7 @@ class TransferResource extends JsonResource
                 'image' => $car->image,
                 'type' => $car->type,
                 'active' => $car->active,
-                'price' => $price['price'],
+                'price' => $price,
                 'person_quantity' => $car->person_quantity,
                 'baggage_quantity' => $car->baggage_quantity,
             ];
