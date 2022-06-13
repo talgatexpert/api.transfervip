@@ -75,7 +75,7 @@ jobs:
           script: |
             mkdir -p "${{ matrix.server.path }}/releases"
             mkdir -p "${{ matrix.server.path }}/releases/${{ github.sha }}"
-            tar xzf {{ matrix.server.path }}/artifacts/api.${{ github.sha }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ github.sha }}"
+            tar xzf ${{ matrix.server.path }}/artifacts/api.${{ github.sha }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ github.sha }}"
 
 
 #  build:
