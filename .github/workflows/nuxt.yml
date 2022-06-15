@@ -19,8 +19,8 @@ jobs:
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: |
-          printf "%s" ${{ secrets.NUXT_CONFIG }} > "nuxt.config.js"
-          printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "cosystem.config.js"
+          printf "%s" ${{ secrets.NUXT_CONFIG }} > "./nuxt.config.js"
+          printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "./cosystem.config.js"
           npm run build
           tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  *
       - name: Store artifact for dist
