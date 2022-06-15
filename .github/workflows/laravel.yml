@@ -128,8 +128,8 @@ jobs:
             printf "%s" "$LARAVEL_ENV" > "$BASE_PATH/.env"
             ln -s -n -f "$BASE_PATH/.env" $RELEASE_PATH
             ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
-            cd $ACTIVE_RELEASE_PATH/api/
-            php $ACTIVE_RELEASE_PATH/api/artisan migrate --force
+            cd $ACTIVE_RELEASE_PATH
+#            php $ACTIVE_RELEASE_PATH/api/artisan migrate --force
 
 
   run-after-hook:
