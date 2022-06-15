@@ -14,14 +14,16 @@ jobs:
     outputs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix  }}
     steps:
+      - uses: actions/checkout@v2
+      - name: Configure node js
       - name: Prepare build
-        working-directory: client
         run: |
-          printf "%s" "${{ secrets.NUXT_CONFIG }}" > "./nuxt.config.js"
-          printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "./ecosystem.config.js"
-          npm run build
-      - name: Prepare zip
+          printf "%s" "${{ secrets.NUXT_CONFIG }}" > "client/nuxt.config.js"
+          printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "client/ecosystem.config.js"
+      - name: Run npm scripts
         working-directory: client
+        run: npm run build
+      - name: Prepare zip
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  *
