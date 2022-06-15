@@ -1,4 +1,9 @@
-import {API_URL, DOMAIN_URL} from "./routes/main";
+import path from 'path';
+import fs from 'fs';
+
+const API_URL = "https://api.vitotransfer.ru/api";
+const DOMAIN_URL = "https://api.vitotransfer.ru";
+
 
 export default {
     // Global page headers: https://go.nuxtjs.dev/config-head
@@ -187,10 +192,17 @@ export default {
         }
     },
 
+    server: {
+        https: {
+            key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
+            cert: fs.readFileSync(path.resolve(__dirname, 'server.crt')),
+        },
+    },
+
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
         babel: {
-            compact: true
-        }
+            compact: true,
+        },
     },
 };

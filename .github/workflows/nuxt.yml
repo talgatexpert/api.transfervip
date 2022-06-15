@@ -20,8 +20,8 @@ jobs:
           node-version: 14
       - name: Prepare build
         run: |
-          echo "${{ secrets.NUXT_CONFIG }}" > "client/nuxt.config.js"
-          echo "${{ secrets.NUXT_ECOSYSTEM }}" > "client/ecosystem.config.js"
+          cp client/nuxt.config.js.exapmle nuxt.config.js
+#          echo "${{ secrets.NUXT_ECOSYSTEM }}" > "client/ecosystem.config.js"
       - name: Run npm scripts
         working-directory: client
         run: npm install && npm run build
