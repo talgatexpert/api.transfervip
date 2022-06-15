@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
+        working-directory: client
         with:
           node-version: ${{ matrix.node-version }}
         run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/nuxt.config.js printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/ecosystem.config.js"  npm install && npm run build
