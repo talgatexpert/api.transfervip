@@ -134,6 +134,8 @@ jobs:
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH,LARAVEL_ENV
           script: |
 
+            cp $RELEASE_PATH/client/nuxt.config.js.production $RELEASE_PATH/client/nuxt.config.js
+            cp $RELEASE_PATH/client/ecosystem.config.js.production $RELEASE_PATH/client/ecosystem.config.js
             ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
 #            cd $ACTIVE_RELEASE_PATH
 #            pm2 start
