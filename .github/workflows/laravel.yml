@@ -128,7 +128,6 @@ jobs:
             printf "%s" "$LARAVEL_ENV" > "$BASE_PATH/.env"
             ln -s -n -f "$BASE_PATH/.env" $RELEASE_PATH
             ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
-#            systemctl php8.1-fpm reload
             cd $BASE_PATH
             php artisan migrate --force
 
@@ -183,24 +182,5 @@ jobs:
             cd $ARTIFACTS_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
 
 
-  build:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [ 14.x ]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-        working-directory: client
-        run: npm run build
-      - name: Prepare zip
-        run: tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  *
 
 
