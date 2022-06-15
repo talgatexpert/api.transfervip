@@ -14,16 +14,15 @@ jobs:
     outputs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix  }}
     steps:
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/checkout@v2
-        working-directory: client
-        run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/nuxt.config.js printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/ecosystem.config.js"
       - name: Prepare zip
-        uses: actions/setup-node@v3
         working-directory: client
         env:
           GITHUB_SHA: ${{ github.sha }}
-        run: tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  *
+        run: |
+          printf "%s" ${{ secrets.NUXT_CONFIG }} > "nuxt.config.js"
+          printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "cosystem.config.js"
+          npm run build
+          tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  *
       - name: Store artifact for dist
         uses: actions/upload-artifact@v2
         with:
@@ -66,15 +65,21 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           GITHUB_SHA: ${{ github.sha }}
+          RELEASE_PATH: ${{ matrix.server.path }}/releases/${{ github.sha }}
+          ACTIVE_RELEASE_PATH: ${{ matrix.server.path }}/current
+          BASE_PATH: ${{ matrix.server.path }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
-          envs: GITHUB_SHA
+          envs: GITHUB_SHA, BASE_PATH, ACTIVE_RELEASE_PATH,RELEASE_PATH
           script: |
             mkdir -p "${{ matrix.server.path }}/releases"
             mkdir -p "${{ matrix.server.path }}/releases/${{ github.sha }}"
+            printf "%s" ${{ secrets.NUXT_CONFIG }} > "$ACTIVE_RELEASE_PATH/nuxt.config.js"
+            printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "$ACTIVE_RELEASE_PATH/ecosystem.config.js"
+
             tar xzf ${{ matrix.server.path }}/artifacts/client.${{ github.sha }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ github.sha }}"
   run-before-hook:
     name: "${{ matrix.server.name }}: Before hook"
@@ -125,7 +130,7 @@ jobs:
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH,LARAVEL_ENV
           script: |
 
-            cd $BASE_PATH
+            cd $ACTIVE_RELEASE_PATH
             pm2 start
             pm2 save
 
