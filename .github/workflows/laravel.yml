@@ -128,7 +128,7 @@ jobs:
             printf "%s" "$LARAVEL_ENV" > "$BASE_PATH/.env"
             ln -s -n -f "$BASE_PATH/.env" $RELEASE_PATH
             ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
-            cd $BASE_PATH
+            cd ${{ martix.server.path }}
             php artisan migrate --force
 
 
