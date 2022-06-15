@@ -1,4 +1,4 @@
-name: Deploy Application to production
+name: Nuxt production
 on:
   push:
     branches:
@@ -15,16 +15,15 @@ jobs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix  }}
     steps:
       - name: make nuxt-confif file
-      - run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "nuxt.config.js"
-      - name: make nuxt-confif file
-      - run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "ecosystem.config.js"
+      - run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/nuxt.config.js"
 
-      - uses: actions/checkout@v3
+      - name: make nuxt-confif file
+      - run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/ecosystem.config.js"
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-        working-directory: client
         run: npm install && npm run build
       - name: Prepare zip
         working-directory: client

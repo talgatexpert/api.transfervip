@@ -1,4 +1,4 @@
-name: Deploy Application to production
+name: Laravel production
 on:
   push:
     branches:
