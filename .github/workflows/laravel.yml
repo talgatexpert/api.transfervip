@@ -128,6 +128,8 @@ jobs:
             printf "%s" "$LARAVEL_ENV" > "$BASE_PATH/.env"
             ln -s -n -f "$BASE_PATH/.env" $RELEASE_PATH/api/
             ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
+            php $RELEASE_PATH/api/artisan down
+            php $RELEASE_PATH/api/artisan optimize
             php $RELEASE_PATH/api/artisan migrate --force
 
 
@@ -155,6 +157,8 @@ jobs:
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,STORAGE_PATH,BASE_PATH
           script: |
             ${{ matrix.server.afterHooks }}
+            php $RELEASE_PATH/api/artisan up
+
 
 
   clean-up:
