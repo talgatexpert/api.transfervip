@@ -20,8 +20,8 @@ jobs:
           node-version: 14
       - name: Prepare build
         run: |
-          printf "%s" "${{ secrets.NUXT_CONFIG }}" > "client/nuxt.config.js"
-          printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "client/ecosystem.config.js"
+          echo "${{ secrets.NUXT_CONFIG }}" > "client/nuxt.config.js"
+          echo "${{ secrets.NUXT_ECOSYSTEM }}" > "client/ecosystem.config.js"
       - name: Run npm scripts
         working-directory: client
         run: npm install && npm run build
@@ -83,9 +83,6 @@ jobs:
           script: |
             mkdir -p "${{ matrix.server.path }}/releases"
             mkdir -p "${{ matrix.server.path }}/releases/${{ github.sha }}"
-            printf "%s" ${{ secrets.NUXT_CONFIG }} > "$ACTIVE_RELEASE_PATH/nuxt.config.js"
-            printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "$ACTIVE_RELEASE_PATH/ecosystem.config.js"
-
             tar xzf ${{ matrix.server.path }}/artifacts/client.${{ github.sha }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ github.sha }}"
   run-before-hook:
     name: "${{ matrix.server.name }}: Before hook"
@@ -136,9 +133,9 @@ jobs:
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH,LARAVEL_ENV
           script: |
 
-            cd $ACTIVE_RELEASE_PATH
-            pm2 start
-            pm2 save
+#            cd $ACTIVE_RELEASE_PATH
+#            pm2 start
+#            pm2 save
 
 
   run-after-hook:
