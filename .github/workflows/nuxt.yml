@@ -28,7 +28,7 @@ jobs:
       - name: Prepare zip
         env:
           GITHUB_SHA: ${{ github.sha }}
-        run: tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  *
+        run: tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  client
       - name: Store artifact for dist
         uses: actions/upload-artifact@v2
         with:
