@@ -14,19 +14,11 @@ jobs:
     outputs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix  }}
     steps:
-      - name: make nuxt-confif file
-        uses: actions/setup-node@v3
-      - run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/nuxt.config.js"
-
-      - name: make nuxt-confif file
-        uses: actions/setup-node@v3
-      - run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/ecosystem.config.js"
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-        run: npm install && npm run build
+        run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/nuxt.config.js printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/ecosystem.config.js"  npm install && npm run build
       - name: Prepare zip
         uses: actions/setup-node@v3
         working-directory: client
