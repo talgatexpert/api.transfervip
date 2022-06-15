@@ -15,11 +15,11 @@ jobs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix  }}
     steps:
       - name: make nuxt-confif file
-      uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
       - run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/nuxt.config.js"
 
       - name: make nuxt-confif file
-      - uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
       - run: printf "%s" ${{ secrets.NUXT_CONFIG }} > "client/ecosystem.config.js"
 
       - name: Use Node.js ${{ matrix.node-version }}
