@@ -134,6 +134,7 @@ jobs:
           envs: GITHUB_SHA,RELEASE_PATH,ACTIVE_RELEASE_PATH,BASE_PATH,LARAVEL_ENV
           script: |
 
+            ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
 #            cd $ACTIVE_RELEASE_PATH
 #            pm2 start
 #            pm2 save
