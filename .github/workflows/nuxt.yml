@@ -14,15 +14,17 @@ jobs:
     outputs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix  }}
     steps:
+      - name: Prepare build
+        working-directory: client
+        run: |
+          printf "%s" "${{ secrets.NUXT_CONFIG }}" > "./nuxt.config.js"
+          printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "./ecosystem.config.js"
+          npm run build
       - name: Prepare zip
         working-directory: client
         env:
           GITHUB_SHA: ${{ github.sha }}
-        run: |
-          printf "%s" ${{ secrets.NUXT_CONFIG }} > "./nuxt.config.js"
-          printf "%s" "${{ secrets.NUXT_ECOSYSTEM }}" > "./cosystem.config.js"
-          npm run build
-          tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  *
+        run: tar -czf client.${{ github.sha }}.tar.gz --exclude=*.git  *
       - name: Store artifact for dist
         uses: actions/upload-artifact@v2
         with:
