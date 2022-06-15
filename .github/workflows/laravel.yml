@@ -22,12 +22,12 @@ jobs:
       - name: Create deployment artifact
         env:
           GITHUB_SHA: ${{ github.sha }}
-        run: tar -czf api.${{ github.sha }}.tar.gz --exclude=*.git --exclude=node_modules api
+        run: tar -czf ${{ github.sha }}.tar.gz --exclude=*.git --exclude=node_modules api
       - name: Store artifact for dist
         uses: actions/upload-artifact@v2
         with:
           name: app-build
-          path: api.${{ github.sha }}.tar.gz
+          path: ${{ github.sha }}.tar.gz
       - name: Export deployment matrix
         id: export-deployment-matrix
         run: |
@@ -59,7 +59,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
-          source: api.${{ github.sha }}.tar.gz
+          source: ${{ github.sha }}.tar.gz
           target: ${{ matrix.server.path }}/artifacts
       - name: Extract archive and create directories
         uses: appleboy/ssh-action@master
@@ -74,7 +74,7 @@ jobs:
           script: |
             mkdir -p "${{ matrix.server.path }}/releases"
             mkdir -p "${{ matrix.server.path }}/releases/${{ github.sha }}"
-            tar xzf ${{ matrix.server.path }}/artifacts/api.${{ github.sha }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ github.sha }}"
+            tar xzf ${{ matrix.server.path }}/artifacts/${{ github.sha }}.tar.gz -C "${{ matrix.server.path }}/releases/${{ github.sha }}"
 #            chmod -R 0777 ${{ matrix.server.path }}/storage
   run-before-hook:
     name: "${{ matrix.server.name }}: Before hook"
@@ -178,8 +178,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           envs: ARTIFACTS_PATH,RELEASES_PATH
           script: |
-            cd $RELEASES_PATH && ls | grep -v $GITHUB_SHA | xargs rm -rf
-            cd $ARTIFACTS_PATH && ls | grep -v api.$GITHUB_SHA | xargs rm -rf
+            cd $RELEASES_PATH && ls | grep -v "$GITHUB_SHA" | xargs rm -rf
+            cd $ARTIFACTS_PATH && ls | grep -v "$GITHUB_SHA" | xargs rm -rf
 
 
 
