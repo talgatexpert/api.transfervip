@@ -129,7 +129,7 @@ jobs:
             ln -s -n -f "$BASE_PATH/.env" $RELEASE_PATH
             ln -s -n -f $RELEASE_PATH $ACTIVE_RELEASE_PATH
             cd $ACTIVE_RELEASE_PATH
-            php artisan migrate --force
+            php $ACTIVE_RELEASE_PATH/artisan migrate --force
 
 
   run-after-hook:
