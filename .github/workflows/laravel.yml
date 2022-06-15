@@ -168,6 +168,7 @@ jobs:
       - name: Run before hook
         uses: appleboy/ssh-action@master
         env:
+          GITHUB_SHA: ${{ github.sha }}
           ARTIFACTS_PATH: ${{ matrix.server.path }}/artifacts/
           RELEASES_PATH: ${{ matrix.server.path }}/releases/
         with:
@@ -177,8 +178,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           envs: ARTIFACTS_PATH,RELEASES_PATH
           script: |
-            cd $RELEASES_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
-            cd $ARTIFACTS_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
+            cd $RELEASES_PATH && ls | grep -v $GITHUB_SHA | xargs rm -rf
+            cd $ARTIFACTS_PATH && ls | grep -v api.$GITHUB_SHA | xargs rm -rf
 
 
 

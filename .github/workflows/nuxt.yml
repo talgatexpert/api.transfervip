@@ -179,6 +179,7 @@ jobs:
         uses: appleboy/ssh-action@master
         env:
           ARTIFACTS_PATH: ${{ matrix.server.path }}/artifacts/
+          GITHUB_SHA: ${{ github.sha }}
           RELEASES_PATH: ${{ matrix.server.path }}/releases/
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -187,6 +188,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           envs: ARTIFACTS_PATH,RELEASES_PATH
           script: |
-            cd $RELEASES_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
-            cd $ARTIFACTS_PATH && ls -t -1 | tail -n +6 | xargs rm -rf
+            cd $RELEASES_PATH && ls | grep -v $GITHUB_SHA | xargs rm -rf
+            cd $ARTIFACTS_PATH && ls | grep -v client.$GITHUB_SHA | xargs rm -rf
 
