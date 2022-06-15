@@ -20,9 +20,6 @@ jobs:
           node-version: 14
       - name: Prepare build
         run: |
-          openssl genrsa 2048 > client/server.key
-          chmod 400 client/server.key
-          openssl req -new -x509 -nodes -sha256 -days 365 -key client/server.key -out client/server.crt
           echo "${{ secrets.NUXT_CONFIG }}" > "client/nuxt.config.js"
           echo "${{ secrets.NUXT_ECOSYSTEM }}" > "client/ecosystem.config.js"
       - name: Run npm scripts
