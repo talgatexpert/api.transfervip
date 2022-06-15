@@ -14,8 +14,8 @@ jobs:
     outputs:
       deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix  }}
     steps:
-      - uses: actions/checkout@v2
       - name: Configure node js
+        uses: actions/checkout@v2
       - name: Prepare build
         run: |
           printf "%s" "${{ secrets.NUXT_CONFIG }}" > "client/nuxt.config.js"
