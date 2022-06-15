@@ -1,0 +1,12 @@
+[
+  {
+    "name": "server",
+    "ip": "188.225.38.112",
+    "username": "lux",
+    "password": "",
+    "port": "22",
+    "beforeHooks": "",
+    "afterHooks": "",
+    "path": "/home/lux/client"
+  }
+]
